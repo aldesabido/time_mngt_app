@@ -1,0 +1,28 @@
+{
+  "name": "app7",
+  "displayName": "app7",
+  "expo": {
+    "name": "app7",
+    "description": "No description",
+    "slug": "app7",
+    "privacy": "public",
+    "sdkVersion": "25.0.0",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "primaryColor": "#cccccc",
+    "icon": "./App/Images/icon.png",
+    "splash": {
+      "image": "./App/Images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "packagerOpts": {
+      "assetExts": [
+        "ttf"
+      ]
+    },
+    "ios": {
+      "supportsTablet": true
+    }
+  }
+}
