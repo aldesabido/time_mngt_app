@@ -53,7 +53,7 @@ class PresentationScreen extends React.Component {
         </TouchableOpacity>
         <ScrollView showsVerticalScrollIndicator={false} bounces={false} style={styles.container}>
           <View style={styles.centered}>
-            <Image source={Images.igniteClear} style={styles.logo} />
+            <Image source={Images.logo} style={styles.logo} />
           </View>
 
           <Text style={styles.sectionText}>
