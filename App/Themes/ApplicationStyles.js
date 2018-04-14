@@ -27,6 +27,27 @@ const ApplicationStyles = {
       margin: Metrics.section,
       padding: Metrics.baseMargin
     },
+    sectionTitleLogin: {
+      ...Fonts.style.h1,
+      paddingVertical: Metrics.doubleBaseMargin,
+      color: Colors.snow,
+      marginVertical: Metrics.smallMargin,
+      textAlign: 'center',
+    },
+    sectionLogin: {
+      ...Fonts.style.normal,
+      paddingVertical: Metrics.doubleBaseMargin,
+      color: Colors.snow,
+      marginVertical: Metrics.smallMargin,
+      textAlign: 'center'
+    },
+    sectionLoginInput: {
+      height: 40,
+      backgroundColor: 'rgba(255,255,255,0.2)',
+      marginBottom: 20,
+      color: '#FFF',
+      paddingHorizontal: 10
+    },
     sectionText: {
       ...Fonts.style.normal,
       paddingVertical: Metrics.doubleBaseMargin,
