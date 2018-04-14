@@ -9,6 +9,7 @@ import ComponentExamplesScreen from './ComponentExamplesScreen'
 import PluginExamplesScreen from './PluginExamplesScreen'
 import ThemeScreen from './ThemeScreen'
 import FaqScreen from './FaqScreen'
+import Calendar from './Calendar'
 
 // Styles
 import styles from './Styles/PresentationScreenStyles'
@@ -32,6 +33,10 @@ class PresentationScreen extends React.Component {
 
   openFaq = () => {
     this.props.navigation.navigate('FaqScreen')
+  }
+
+  openCalendar = () => {
+    this.props.navigation.navigate('Calendar')
   }
 
   render () {
@@ -64,8 +69,8 @@ class PresentationScreen extends React.Component {
             <ButtonBox onPress={this.openTheme} image={Images.theme} text='Theme' />
           </View>
           <View style={styles.buttonsContainer}>
-            <ButtonBox style={styles.deviceButton} image={Images.deviceInfo} text='Device Info N/A' />
-            <ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />
+            <ButtonBox onPress={this.openCalendar} text='Calendar' />
+            {/*<ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />*/}
           </View>
         </ScrollView>
         <View style={styles.banner}>
@@ -82,7 +87,8 @@ export default StackNavigator({
   ComponentExamplesScreen: {screen: ComponentExamplesScreen},
   PluginExamplesScreen: {screen: PluginExamplesScreen},
   ThemeScreen: {screen: ThemeScreen},
-  FaqScreen: {screen: FaqScreen}
+  FaqScreen: {screen: FaqScreen},
+  Calendar: {screen: Calendar}
 }, {
   cardStyle: {
     opacity: 1,
