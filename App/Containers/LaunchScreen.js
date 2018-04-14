@@ -8,6 +8,19 @@ import { Images } from '../Themes'
 import styles from './Styles/LaunchScreenStyles'
 
 export default class LaunchScreen extends Component {
+  constructor(){
+    super();
+    this.state = {
+      username: '',
+    }
+  }
+
+  onChangeText(value){
+    this.setState({
+          username:value
+      });
+  }
+  
   render () {
     return (
       <View style={styles.mainContainer}>
@@ -16,13 +29,14 @@ export default class LaunchScreen extends Component {
           <View style={styles.centered}>
             <Image source={Images.logo} style={styles.logo} />
           </View>
-
           <View style={styles.section} >
             <Text style={styles.sectionTitleLogin}> Welcome! </Text>
             <Text style={styles.sectionLogin}>User</Text>
             <TextInput 
               placeholder='username'
               style={styles.input}
+              value={this.state.username}
+              onChangeText={(value) => this.onChangeText(value)}
               placeholderTextColor='rgba(255,255,255,0.2)'
             />
             <Text style={styles.sectionLogin}>Password</Text>
@@ -32,8 +46,7 @@ export default class LaunchScreen extends Component {
               placeholderTextColor='rgba(255,255,255,0.2)'
             />
           </View>
-
-          <LoginButton />
+          <LoginButton username={this.state.username} />
         </ScrollView>
       </View>
     )

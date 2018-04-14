@@ -15,6 +15,13 @@ import Calendar from './Calendar'
 import styles from './Styles/PresentationScreenStyles'
 
 class PresentationScreen extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      username: this.props.screenProps.username
+    }
+  }
+
   openComponents = () => {
     this.props.navigation.navigate('ComponentExamplesScreen')
   }
@@ -57,8 +64,7 @@ class PresentationScreen extends React.Component {
           </View>
 
           <Text style={styles.sectionText}>
-            Default screens for development, debugging, and alpha testing
-            are available below.
+            Hi there, {this.state.username} !
           </Text>
           <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openComponents} style={styles.componentButton} image={Images.components} text='Components' />
