@@ -12,6 +12,8 @@ export default class LaunchScreen extends Component {
     return (
       <View style={styles.mainContainer}>
         <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+
+        
         <ScrollView style={styles.container}>
           <View style={styles.centered}>
             <Image style={styles.logo} />
