@@ -10,6 +10,7 @@ import PluginExamplesScreen from './PluginExamplesScreen'
 import ThemeScreen from './ThemeScreen'
 import FaqScreen from './FaqScreen'
 import Calendar from './Calendar'
+import TodoList from './TodoList'
 
 // Styles
 import styles from './Styles/PresentationScreenStyles'
@@ -43,6 +44,10 @@ class PresentationScreen extends React.Component {
     this.props.navigation.navigate('Calendar')
   }
 
+  openTodoList = () => {
+    this.props.navigation.navigate('TodoList')
+  }
+
   render () {
     return (
       <View style={styles.mainContainer}>
@@ -73,6 +78,7 @@ class PresentationScreen extends React.Component {
           </View> */}
           <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openCalendar} text='Calendar' />
+            <ButtonBox onPress={this.openTodoList} text='TodoList' />
             {/*<ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />*/}
           </View>
         </ScrollView>
@@ -91,7 +97,8 @@ export default StackNavigator({
   PluginExamplesScreen: {screen: PluginExamplesScreen},
   ThemeScreen: {screen: ThemeScreen},
   FaqScreen: {screen: FaqScreen},
-  Calendar: {screen: Calendar}
+  Calendar: {screen: Calendar},
+  TodoList: {screen: TodoList}
 }, {
   cardStyle: {
     opacity: 1,
