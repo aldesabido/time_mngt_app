@@ -19,25 +19,25 @@ class PresentationScreen extends React.Component {
     super(props);
   }
   
-  openComponents = () => {
-    this.props.navigation.navigate('ComponentExamplesScreen')
-  }
+  // openComponents = () => {
+  //   this.props.navigation.navigate('ComponentExamplesScreen')
+  // }
 
-  openUsage = () => {
-    this.props.navigation.navigate('PluginExamplesScreen')
-  }
+  // openUsage = () => {
+  //   this.props.navigation.navigate('PluginExamplesScreen')
+  // }
 
-  openApi = () => {
-    this.props.navigation.navigate('APITestingScreen')
-  }
+  // openApi = () => {
+  //   this.props.navigation.navigate('APITestingScreen')
+  // }
 
-  openTheme = () => {
-    this.props.navigation.navigate('ThemeScreen')
-  }
+  // openTheme = () => {
+  //   this.props.navigation.navigate('ThemeScreen')
+  // }
 
-  openFaq = () => {
-    this.props.navigation.navigate('FaqScreen')
-  }
+  // openFaq = () => {
+  //   this.props.navigation.navigate('FaqScreen')
+  // }
 
   openCalendar = () => {
     this.props.navigation.navigate('Calendar')
@@ -63,14 +63,14 @@ class PresentationScreen extends React.Component {
           <Text style={styles.sectionText}>
             Hi there, {this.props.screenProps.username} !
           </Text>
-          <View style={styles.buttonsContainer}>
+          {/* <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openComponents} style={styles.componentButton} image={Images.components} text='Components' />
             <ButtonBox onPress={this.openUsage} style={styles.usageButton} image={Images.usageExamples} text='Plugin Examples' />
           </View>
           <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openApi} style={styles.apiButton} image={Images.api} text='API Testing' />
             <ButtonBox onPress={this.openTheme} image={Images.theme} text='Theme' />
-          </View>
+          </View> */}
           <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openCalendar} text='Calendar' />
             {/*<ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />*/}

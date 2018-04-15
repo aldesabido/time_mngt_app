@@ -8,6 +8,8 @@ import {
 import { StackNavigator } from 'react-navigation'
 import Calendars from './Calendars'
 import CalendarsList from './CalendarsList'
+import HorizontalCalendarsList from './HorizontalCalendarList'
+import Agenda from './Agenda'
 
 class MenuScreen extends Component {
   constructor(props){
@@ -65,4 +67,6 @@ export default StackNavigator({
   Menu: {screen: MenuScreen},
   Calendars: {screen: Calendars},
   CalendarsList: {screen: CalendarsList},
+  HorizontalCalendarsList: {screen: HorizontalCalendarsList},
+  Agenda: {screen: Agenda}
 })
