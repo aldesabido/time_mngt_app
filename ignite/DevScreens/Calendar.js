@@ -1,33 +1,32 @@
-// An All Components Screen is a great way to dev and quick-test components
-import React from 'react'
-import { Platform, View, ScrollView, Text, Image, TouchableOpacity } from 'react-native'
-import { Images } from './DevTheme'
-import styles from './Styles/ComponentExamplesScreenStyles'
+import { StackNavigator } from 'react-navigation';
+import {registerScreens} from './calendarscreens';
+import Menu from './calendarscreens/Menu';
+import React from 'react';
 
-// Examples Render Engine
-import ExamplesRegistry from '../../App/Services/ExamplesRegistry'
+// eslint-disable-next-line no-console
+// console.ignoredYellowBox = ['Remote debugger'];
+
+/*
+import {LocaleConfig} from 'react-native-calendars';
+
+LocaleConfig.locales['fr'] = {
+  monthNames: ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'],
+  monthNamesShort: ['Janv.','Févr.','Mars','Avril','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.'],
+  dayNames: ['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'],
+  dayNamesShort: ['Dim.','Lun.','Mar.','Mer.','Jeu.','Ven.','Sam.']
+};
+
+LocaleConfig.defaultLocale = 'fr';
+*/
 
 class Calendar extends React.Component {
-  
+
   render () {
     return (
-      <View style={[styles.container, styles.mainContainer]}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
-        <TouchableOpacity onPress={() => this.props.navigation.goBack()} style={{
-          position: 'absolute',
-          paddingTop: 30,
-          paddingHorizontal: 5,
-          zIndex: 10
-        }}>
-          <Image source={Images.backButton} />
-        </TouchableOpacity>
-
-        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-          <Text> HELLO THERE! </Text>
-        </ScrollView>
-      </View>
+      <Menu />
     )
   }
 }
 
 export default Calendar
+

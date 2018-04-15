@@ -18,6 +18,10 @@ ExamplesRegistry.addComponentExample('Rounded Button', () =>
 )
 
 export default class RoundedButton extends Component {
+  constructor(props){
+    super(props);
+  }
+
   static propTypes = {
     onPress: PropTypes.func,
     text: PropTypes.string,
@@ -32,7 +36,7 @@ export default class RoundedButton extends Component {
 
   render () {
     return (
-      <TouchableOpacity disabled={!this.props.screenProps.username} 
+      <TouchableOpacity disabled={!this.props.screenProps.username}
         style={styles.button} 
         onPress={this.props.onPress}
         >

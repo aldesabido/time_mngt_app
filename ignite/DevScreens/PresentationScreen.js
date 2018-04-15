@@ -17,11 +17,8 @@ import styles from './Styles/PresentationScreenStyles'
 class PresentationScreen extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      username: this.props.screenProps.username
-    }
   }
-
+  
   openComponents = () => {
     this.props.navigation.navigate('ComponentExamplesScreen')
   }
@@ -49,7 +46,7 @@ class PresentationScreen extends React.Component {
   render () {
     return (
       <View style={styles.mainContainer}>
-        <Image source={Images.background} style={styles.backgroundImage} resizeMode='stretch' />
+        <Image style={styles.backgroundImage} resizeMode='stretch' />
         <TouchableOpacity onPress={this.props.screenProps.toggle} style={{
           position: 'absolute',
           paddingTop: 30,
@@ -64,7 +61,7 @@ class PresentationScreen extends React.Component {
           </View>
 
           <Text style={styles.sectionText}>
-            Hi there, {this.state.username} !
+            Hi there, {this.props.screenProps.username} !
           </Text>
           <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openComponents} style={styles.componentButton} image={Images.components} text='Components' />
