@@ -8,8 +8,6 @@ import {
 import { StackNavigator } from 'react-navigation'
 import Calendars from './Calendars'
 import CalendarsList from './CalendarsList'
-import HorizontalCalendarsList from './HorizontalCalendarList'
-import Agenda from './Agenda'
 
 class MenuScreen extends Component {
   constructor(props){
@@ -23,14 +21,6 @@ class MenuScreen extends Component {
     this.props.navigation.navigate('CalendarsList')
   }
 
-  onHorizontalCalendarListPress = () => {
-    this.props.navigation.navigate('HorizontalCalendarList')
-  }
-
-  onAgendaPress = () => {
-    this.props.navigation.navigate('Agenda')
-  }
-
   render() {
     return (
       <View>
@@ -39,12 +29,6 @@ class MenuScreen extends Component {
         </TouchableOpacity>
         <TouchableOpacity style={styles.menu} onPress={this.onCalendarListPress}>
           <Text style={styles.menuText}>Calendar List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menu} onPress={this.onHorizontalCalendarListPress}>
-          <Text style={styles.menuText}>Horizontal Calendar List</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.menu} onPress={this.onAgendaPress}>
-          <Text style={styles.menuText}>Agenda</Text>
         </TouchableOpacity>
       </View>
     );
@@ -66,7 +50,5 @@ const styles = StyleSheet.create({
 export default StackNavigator({
   Menu: {screen: MenuScreen},
   Calendars: {screen: Calendars},
-  CalendarsList: {screen: CalendarsList},
-  HorizontalCalendarsList: {screen: HorizontalCalendarsList},
-  Agenda: {screen: Agenda}
+  CalendarsList: {screen: CalendarsList}
 })

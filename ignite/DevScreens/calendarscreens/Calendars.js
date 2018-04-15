@@ -6,11 +6,14 @@ import {
   View
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
+import AgendaScreen from './Agenda';
 
-export default class CalendarsScreen extends Component {
+export default class CalendarsScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      selected: 'Today'
+    };
     this.onDayPress = this.onDayPress.bind(this);
   }
   onDayPress(day) {
@@ -19,16 +22,19 @@ export default class CalendarsScreen extends Component {
     });
   }
 
+  
+
   render() {
     return (
       <ScrollView style={styles.container}>
-        <Text style={styles.text}>Calendar with selectable date and arrows</Text>
+        <Text style={styles.text}>Showing Agenda for: {this.state.selected}</Text>
         <Calendar
           onDayPress={this.onDayPress}
           style={styles.calendar}
           hideExtraDays
           markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
         />
+        <AgendaScreen value={this.state.selected} />
       </ScrollView>
     );
   }
