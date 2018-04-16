@@ -25,7 +25,7 @@ export default class CalendarsScreen extends React.Component {
     this.setState({
       selected: day.dateString
     });
-    {this.props.navigation.navigate('Agenda', {passprop: day.dateString})} 
+    {this.props.navigation.navigate('Agenda', {passprop: day.dateString})}
   }
 
   render() {

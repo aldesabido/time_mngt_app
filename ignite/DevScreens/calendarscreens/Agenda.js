@@ -42,9 +42,11 @@ export default class AgendaScreen extends React.Component {
 
   onDayPress(day){
     this.setState({
-      selected: day.dateString
+      selected: day.dateString,
+      items : {}
     });
-    this.props.navigation.navigate('Agenda', {passprop: day.dateString})
+    //this.props.navigation.navigate('Agenda', {passprop: day.dateString})
+    this.forceUpdate();
   }
 
 
@@ -255,6 +257,7 @@ export default class AgendaScreen extends React.Component {
       });
     }, 1000);
     // console.log(`Load Items for ${day.year}-${day.month}`);
+    console.log("Items Loaded");
   }
 
   renderItem(item) {
