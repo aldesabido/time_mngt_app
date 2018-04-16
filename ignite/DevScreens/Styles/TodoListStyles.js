@@ -16,8 +16,10 @@ export default StyleSheet.create({
       alignItems : 'center',
       justifyContent: 'space-between',
     },
-    header:{
-      marginLeft : 10,
+    navBarHeader:{
+      paddingTop: 30,
+      paddingHorizontal: 5,
+      zIndex: 10,
       fontSize: 20,
       fontWeight: 'bold',
     },

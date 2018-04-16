@@ -97,13 +97,9 @@ export default class TodoList extends Component {
             }}>
               <Image source={Images.backButton} />
           </TouchableOpacity>
-          <Text style={{
-              paddingTop: 30,
-              paddingHorizontal: 5,
-              zIndex: 10,
-              fontSize: 20,
-              fontWeight: 'bold',
-            }}>List of Activities</Text>
+          <Text style={styles.navBarHeader}>
+            List of Activities
+          </Text>
         </View>
 
         <FlatList
