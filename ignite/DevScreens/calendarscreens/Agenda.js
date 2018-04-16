@@ -6,7 +6,8 @@ import {
   Button,
   Image,
   TouchableOpacity,
-  Picker
+  Picker,
+  AsyncStorage
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import Calendars from './Calendars';
@@ -29,6 +30,7 @@ export default class AgendaScreen extends React.Component {
       endTime: '',
       date: '',
       selected: params.passprop,
+      tasks: [],  //will contain the activities
       //Modal things switchers
       isMainModalVisible : false,
       isActivityModalVisible : false,
@@ -40,6 +42,11 @@ export default class AgendaScreen extends React.Component {
     this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
   }
 
+  componentDidMount(){
+    Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
+    console.log("mounted!");
+  }
+
   onDayPress(day){
     this.setState({
       selected: day.dateString,
@@ -49,6 +56,29 @@ export default class AgendaScreen extends React.Component {
     this.forceUpdate();
   }
 
+  taskList() {
+    return this.state.tasks.map((tasks,index) => {
+      return (
+        <Picker.Item key={index} label={tasks.text} value={tasks.text} />
+      )
+    })
+  }
+
+  submitHandler(){
+    let hasName = this.state.name.trim().length > 0;
+    let hasDate = this.state.date != '';
+    let hasStart = this.state.startTime != '';
+    let hasEnd = this.state.endTime != '';
+
+    if(hasName && hasDate && hasStart && hasEnd){
+      console.log("Ready for submission");
+      console.log("Name: " + this.state.name);
+      console.log("Date: " + this.state.date);
+      console.log("Start Time: " + this.state.startTime);
+      console.log("End Time:" + this.state.endTime);
+    }
+    this.toggleMainModal();
+  }
 
   render() {
     var {params} = this.props.navigation.state;
@@ -127,13 +157,7 @@ export default class AgendaScreen extends React.Component {
                       * TODO : get activities from aSyncStorage
                       */}
                       <Picker.Item label="Java" value="Java" />
-                      <Picker.Item label="label1" value="label1" />
-                      <Picker.Item label="label2" value="label2" />
-                      <Picker.Item label="label3" value="label3" />
-                      <Picker.Item label="label4" value="label4" />
-                      <Picker.Item label="label5" value="label5" />
-                      <Picker.Item label="label6" value="label6" />
-                      <Picker.Item label="label7" value="label7" />
+                      {this.taskList()}
                     </Picker>
                     <TouchableOpacity 
                         onPress={() => this.setState({isActivityModalVisible : !this.state.isActivityModalVisible})} 
@@ -188,7 +212,7 @@ export default class AgendaScreen extends React.Component {
                   marginLeft: 36
                 }
               }}
-              onDateChange={(time) => {this.setState({startTime: time})}}
+              onDateChange={(time) => {this.setState({startTime: time , endTime:time})}}
             />
             <Text>Input End Time:</Text>
             <DatePicker
@@ -213,18 +237,17 @@ export default class AgendaScreen extends React.Component {
             />
           {//SUBMIT and CANCEL button
           }
-          <TouchableOpacity
-                onPress={this.toggleMainModal} 
-                style={styles.button}>
-                  <Text style={styles.buttonText}> S U B M I T </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                  onPress={this.submitHandler.bind(this)}
+                  style={styles.button}>
+                    <Text style={styles.buttonText}> S U B M I T </Text>
+            </TouchableOpacity>
 
-
-          <TouchableOpacity
-                onPress={this.toggleMainModal}
-                style={styles.Button}>
-                  <Text style={styles.buttonTextDest}> C A N C E L </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+                  onPress={this.toggleMainModal}
+                  style={styles.Button}>
+                    <Text style={styles.buttonTextDest}> C A N C E L </Text>
+            </TouchableOpacity>
 
           </View>
           
@@ -282,3 +305,21 @@ export default class AgendaScreen extends React.Component {
   }
 }
 
+let Tasks = {
+  convertToArrayOfObject(tasks, callback) {
+    return callback(
+      tasks ? tasks.split("||").map((task, i) => ({ key: i, text: task })) : []
+    );
+  },
+  convertToStringWithSeparators(tasks) {
+    return tasks.map(task => task.text).join("||");
+  },
+  all(callback) {
+    return AsyncStorage.getItem("TASKS", (err, tasks) =>
+      this.convertToArrayOfObject(tasks, callback)
+    );
+  },
+  save(tasks) {
+    AsyncStorage.setItem("TASKS", this.convertToStringWithSeparators(tasks));
+  }
+};
