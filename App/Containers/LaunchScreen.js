@@ -11,14 +11,22 @@ export default class LaunchScreen extends Component {
   constructor(){
     super();
     this.state = {
-      username: '',
+      //TODO: CHANGE THIS BACK
+      username: 'User',
+      password: 'password',
     }
   }
 
-  onChangeText(value){
+  onChangeName(value){
     this.setState({
           username:value
-      });
+    });
+  }
+
+  onChangePassword(value){
+    this.setState({
+          password:value
+    });
   }
   
   render () {
@@ -36,14 +44,16 @@ export default class LaunchScreen extends Component {
               placeholder='username'
               style={styles.textInput}
               value={this.state.username}
-              onChangeText={(value) => this.onChangeText(value)}
-              placeholderTextColor='rgba(255,255,255,0.2)'
+              onChangeText={(value) => this.onChangeName(value)}
+              //placeholderTextColor='rgba(255,255,255,0.2)'
             />
             <Text style={styles.sectionLogin}>Password</Text>
             <TextInput 
               placeholder='password'
               style={styles.textInput}
-              placeholderTextColor='rgba(255,255,255,0.2)'
+              secureTextEntry = {true}
+              onChangeText={(value) => this.onChangePassword(value)}
+              //placeholderTextColor='rgba(255,255,255,0.2)'
             />
           </View>
           <LoginButton username={this.state.username} />

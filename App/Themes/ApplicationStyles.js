@@ -95,15 +95,16 @@ const ApplicationStyles = {
     borderWidth: 1,
     borderColor: Colors.ember,
     alignItems: 'center',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   textInput: {
     height: 40,
     paddingRight: 10,
     paddingLeft: 10,
-    borderColor: "white",
+    borderColor: "black",
     borderWidth: 1,
-    width: "100%"
+    width: "100%",
+    color : "black",
   }
 }
 

@@ -5,29 +5,47 @@ import {
   StyleSheet,
   Button,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  Picker
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import Calendars from './Calendars';
 import { Images } from '../DevTheme';
-import  styles from '../../../App/Components/Styles/RoundedButtonStyles'
+import styles from './AgendaStyles'
+
+//imports by Dan huehue
+import ActionButton from 'react-native-action-button';
+import Modal from "react-native-modal";
+import DatePicker from 'react-native-datepicker';
 
 export default class AgendaScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       items: {},
+      name: 'Activity Name',
+      startTime: '',
+      endTime: '',
+      date: '',
+      //Modal things switchers
+      isMainModalVisible : false,
+      isActivityModalVisible : false,
     }
   }
+
+  toggleMainModal = () =>{
+    this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
+  }
+
 
   render() {
     var {params} = this.props.navigation.state;
     return (
-      <View style={localstyles.container}>
+      <View style={styles.container}>
         <TouchableOpacity 
             onPress={() => this.props.navigation.goBack()} 
             style={styles.button}>
-              <Text style={styles.buttonText}>Calendar</Text>
+              <Text style={styles.buttonText}>back to Calendar</Text>
         </TouchableOpacity>
         <Text style={{alignItems: 'center'}}>
           Week's Agenda
@@ -54,6 +72,150 @@ export default class AgendaScreen extends React.Component {
           // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
           //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
         />
+        <ActionButton
+          buttonColor="rgba(231,76,60,1)"
+          onPress={this.toggleMainModal}
+        />
+        {
+          /*
+          *
+          * Form Component what will show up on action button click start here
+          * Basically Modal things start here
+          */
+        }
+        <Modal isVisible={this.state.isMainModalVisible}>
+          <View style={styles.formContainer}>
+          {//HEADERRRRRR
+          }
+          <Text>Add an Activity</Text>
+          {//Name field
+          }
+            <TouchableOpacity
+                onPress={() => this.setState({isActivityModalVisible : !this.state.isActivityModalVisible})} 
+                style={styles.notAButton}>
+                  <Text style={styles.buttonText}>{this.state.name}</Text>
+            </TouchableOpacity>
+            <View style={styles.activityContainer}>
+              <Modal 
+                isVisible={this.state.isActivityModalVisible}
+                style={styles.formContainerActivity}>
+                  <View style={styles.miniFormContainerActivity}>
+                    <TouchableOpacity 
+                        disabled = {true} 
+                        style={styles.notAButton}>
+                          <Text style={styles.buttonText}>Choose an activity</Text>
+                    </TouchableOpacity>
+                    <Picker
+                      selectedValue={this.state.name}
+                      style={{ height: 200, width: 200}}
+                      onValueChange={(itemValue, itemIndex) => this.setState({name: itemValue})}>
+                      <Picker.Item label=" " value="blank" />
+                      {/*
+                      * TODO : get activities from aSyncStorage
+                      */}
+                      <Picker.Item label="Java" value="Java" />
+                      <Picker.Item label="label1" value="label1" />
+                      <Picker.Item label="label2" value="label2" />
+                      <Picker.Item label="label3" value="label3" />
+                      <Picker.Item label="label4" value="label4" />
+                      <Picker.Item label="label5" value="label5" />
+                      <Picker.Item label="label6" value="label6" />
+                      <Picker.Item label="label7" value="label7" />
+                    </Picker>
+                    <TouchableOpacity 
+                        onPress={() => this.setState({isActivityModalVisible : !this.state.isActivityModalVisible})} 
+                        style={styles.button}>
+                          <Text style={styles.buttonText}>OK</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Modal>
+              </View>
+          {//Date fields
+          }
+            <Text>Input Date:</Text>
+            <DatePicker
+              style={styles.formComp}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate="2018-04-01"
+              maxDate="2048-12-31"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(date) => {this.setState({date: date})}}
+            />
+            <Text>Input Start Time:</Text>
+            <DatePicker
+              style={styles.formComp}
+              mode="time"
+              placeholder="select start time"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              date={this.state.startTime}
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(time) => {this.setState({startTime: time})}}
+            />
+            <Text>Input End Time:</Text>
+            <DatePicker
+              style={styles.formComp}
+              mode="time"
+              placeholder="select end time"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              date={this.state.endTime}
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(time) => {this.setState({endTime: time})}}
+            />
+          {//SUBMIT and CANCEL button
+          }
+          <TouchableOpacity
+                onPress={this.toggleMainModal} 
+                style={styles.button}>
+                  <Text style={styles.buttonText}> S U B M I T </Text>
+          </TouchableOpacity>
+
+
+          <TouchableOpacity
+                onPress={this.toggleMainModal}
+                style={styles.Button}>
+                  <Text style={styles.buttonTextDest}> C A N C E L </Text>
+          </TouchableOpacity>
+
+          </View>
+          
+        </Modal>
       </View>
     );
   }
@@ -86,13 +248,13 @@ export default class AgendaScreen extends React.Component {
 
   renderItem(item) {
     return (
-      <View style={[localstyles.item, {height: item.height}]}><Text>{item.name}</Text></View>
+      <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
     );
   }
 
   renderEmptyDate() {
     return (
-      <View style={localstyles.emptyDate}><Text>This is empty date!</Text></View>
+      <View style={styles.emptyDate}><Text>This is empty date!</Text></View>
     );
   }
 
@@ -106,23 +268,3 @@ export default class AgendaScreen extends React.Component {
   }
 }
 
-const localstyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFE5E5",
-    paddingTop: 20
-  },
-  item: {
-    backgroundColor: 'white',
-    flex: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginRight: 10,
-    marginTop: 17
-  },
-  emptyDate: {
-    height: 15,
-    flex:1,
-    paddingTop: 30
-  },
-});
