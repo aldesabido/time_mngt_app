@@ -5,7 +5,8 @@ import {
   ScrollView,
   View,
   TouchableOpacity,
-  Image
+  Image,
+  Button
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import AgendaScreen from './Agenda';
@@ -19,13 +20,11 @@ export default class CalendarsScreen extends React.Component {
     };
     this.onDayPress = this.onDayPress.bind(this);
   }
-  onDayPress(day) {
+  onDayPress(day){
     this.setState({
       selected: day.dateString
-    });
+    });    
   }
-
-  
 
   render() {
     return (
@@ -47,7 +46,9 @@ export default class CalendarsScreen extends React.Component {
           hideExtraDays
           markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
         />
-        <AgendaScreen passprop={this.state.selected} />
+        {this.props.navigation.navigate('Agenda', {passprop: this.state.selected})}
+
+        
       </ScrollView>
     );
   }

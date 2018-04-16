@@ -6,7 +6,7 @@ import { StackNavigator } from 'react-navigation'
 // Screens
 import Calendar from './calendarscreens/Calendars'
 import TodoList from './TodoList'
-
+import Agenda from './calendarscreens/Agenda'
 // Styles
 import styles from './Styles/PresentationScreenStyles'
 
@@ -77,9 +77,6 @@ class PresentationScreen extends React.Component {
             {/*<ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />*/}
           </View>
         </ScrollView>
-        <View style={styles.banner}>
-          <Text style={styles.bannerLabel}>Made with ❤️ by Infinite Red</Text>
-        </View>
       </View>
     )
   }
@@ -88,11 +85,12 @@ class PresentationScreen extends React.Component {
 export default StackNavigator({
   PresentationScreen: {screen: PresentationScreen},
   Calendar: {screen: Calendar},
+  Agenda: {screen: Agenda},
   TodoList: {screen: TodoList}
 }, {
   cardStyle: {
     opacity: 1,
-    backgroundColor: '#3e243f'
+    backgroundColor: '#D3D3D3'
   },
   initialRouteName: 'PresentationScreen',
   headerMode: 'none',
@@ -103,7 +101,7 @@ export default StackNavigator({
         <TouchableOpacity onPress={() => window.alert('pop')} ><Image source={Images.closeButton} style={{marginHorizontal: 10}} /></TouchableOpacity>
       ),
       style: {
-        backgroundColor: '#3e243f'
+        backgroundColor: '#D3D3D3'
       }
     }
   }
