@@ -23,7 +23,8 @@ export default class CalendarsScreen extends React.Component {
   onDayPress(day){
     this.setState({
       selected: day.dateString
-    });    
+    });
+    {this.props.navigation.navigate('Agenda', {passprop: day.dateString})} 
   }
 
   render() {
@@ -46,7 +47,6 @@ export default class CalendarsScreen extends React.Component {
           hideExtraDays
           markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
         />
-        {this.props.navigation.navigate('Agenda', {passprop: this.state.selected})}
 
         
       </ScrollView>
