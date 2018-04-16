@@ -7,7 +7,7 @@ export default StyleSheet.create({
     aspectRatio: 0.9,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: Colors.eggplant
+    backgroundColor: '#e73536'
   },
   image: {
     width: Metrics.icons.xl,

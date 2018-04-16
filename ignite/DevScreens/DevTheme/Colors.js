@@ -11,7 +11,7 @@ const colors = {
   fire: '#ff3832',
   eggplant: '#251a34',
   border: '#483F53',
-  text: '#E0D7E5'
+  text: 'white'
 }
 
 export default colors

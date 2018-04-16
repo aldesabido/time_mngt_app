@@ -16,7 +16,8 @@ const ApplicationStyles = {
       top: 0,
       left: 0,
       bottom: 0,
-      right: 0
+      right: 0,
+      backgroundColor: '#FFE5E5'
     },
     container: {
       flex: 1,

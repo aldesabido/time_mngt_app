@@ -17,7 +17,7 @@ const ApplicationStyles = {
       left: 0,
       bottom: 0,
       right: 0,
-      backgroundColor: '#D3D3D3'
+      backgroundColor: '#FFE5E5'
     },
     container: {
       flex: 1,
@@ -31,14 +31,14 @@ const ApplicationStyles = {
     sectionTitleLogin: {
       ...Fonts.style.h1,
       paddingVertical: Metrics.doubleBaseMargin,
-      color: Colors.snow,
+      color: '#e73536',
       marginVertical: Metrics.smallMargin,
       textAlign: 'center',
     },
     sectionLogin: {
       ...Fonts.style.normal,
       paddingVertical: Metrics.doubleBaseMargin,
-      color: Colors.snow,
+      color: '#e73536',
       marginVertical: Metrics.smallMargin,
       textAlign: 'center'
     },
@@ -96,6 +96,14 @@ const ApplicationStyles = {
     borderColor: Colors.ember,
     alignItems: 'center',
     textAlign: 'center'
+  },
+  textInput: {
+    height: 40,
+    paddingRight: 10,
+    paddingLeft: 10,
+    borderColor: "white",
+    borderWidth: 1,
+    width: "100%"
   }
 }
 

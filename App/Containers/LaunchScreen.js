@@ -34,7 +34,7 @@ export default class LaunchScreen extends Component {
             <Text style={styles.sectionLogin}>User</Text>
             <TextInput 
               placeholder='username'
-              style={styles.input}
+              style={styles.textInput}
               value={this.state.username}
               onChangeText={(value) => this.onChangeText(value)}
               placeholderTextColor='rgba(255,255,255,0.2)'
@@ -42,7 +42,7 @@ export default class LaunchScreen extends Component {
             <Text style={styles.sectionLogin}>Password</Text>
             <TextInput 
               placeholder='password'
-              style={styles.input}
+              style={styles.textInput}
               placeholderTextColor='rgba(255,255,255,0.2)'
             />
           </View>
