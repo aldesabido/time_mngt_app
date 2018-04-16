@@ -109,7 +109,7 @@ export default class AgendaScreen extends React.Component {
 const localstyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5FCFF",
+    backgroundColor: "#FFE5E5",
     paddingTop: 20
   },
   item: {
