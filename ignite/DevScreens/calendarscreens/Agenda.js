@@ -21,20 +21,30 @@ import DatePicker from 'react-native-datepicker';
 export default class AgendaScreen extends React.Component {
   constructor(props) {
     super(props);
+    var {params} = this.props.navigation.state;
     this.state = {
       items: {},
       name: 'Activity Name',
       startTime: '',
       endTime: '',
       date: '',
+      selected: params.passprop,
       //Modal things switchers
       isMainModalVisible : false,
       isActivityModalVisible : false,
     }
+    this.onDayPress = this.onDayPress.bind(this);
   }
 
   toggleMainModal = () =>{
     this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
+  }
+
+  onDayPress(day){
+    this.setState({
+      selected: day.dateString
+    });
+    this.props.navigation.navigate('Agenda', {passprop: day.dateString})
   }
 
 
@@ -52,6 +62,7 @@ export default class AgendaScreen extends React.Component {
         </Text>
         <Agenda
           items={this.state.items}
+          onDayPress={this.onDayPress}
           loadItemsForMonth={this.loadItems.bind(this)}
           selected={params.passprop}
           renderItem={this.renderItem.bind(this)}
@@ -222,7 +233,7 @@ export default class AgendaScreen extends React.Component {
 
   loadItems(day) {
     setTimeout(() => {
-      for (let i = -15; i < 100; i++) {
+      for (let i = -15; i < 1; i++) {
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
         if (!this.state.items[strTime]) {
