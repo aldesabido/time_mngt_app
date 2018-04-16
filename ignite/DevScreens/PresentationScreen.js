@@ -60,7 +60,7 @@ class PresentationScreen extends React.Component {
             <Image source={Images.logo} style={styles.logo} />
           </View>
 
-          <Text style={styles.sectionText}>
+          <Text style={{color: '#e73536', fontSize: 20, textAlign: 'center'}}>
             Hi there, {this.props.screenProps.username} !
           </Text>
           {/* <View style={styles.buttonsContainer}>
