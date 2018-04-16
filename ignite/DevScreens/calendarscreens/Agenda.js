@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  StyleSheet
+  StyleSheet,
+  Button
 } from 'react-native';
 import {Agenda} from 'react-native-calendars';
 import Calendars from './Calendars';
 
 export default class AgendaScreen extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       items: {},
     }
@@ -19,12 +20,12 @@ export default class AgendaScreen extends React.Component {
     return (
       <View>
         <Text>
-          {this.props.selected}
+          {this.props.passprop}
         </Text>
         <Agenda
           items={this.state.items}
           loadItemsForMonth={this.loadItems.bind(this)}
-          selected={this.props.selected}
+          selected={this.props.passprop}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}

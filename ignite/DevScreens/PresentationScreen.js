@@ -4,12 +4,7 @@ import { Images } from './DevTheme'
 import ButtonBox from './ButtonBox'
 import { StackNavigator } from 'react-navigation'
 // Screens
-import APITestingScreen from './APITestingScreen'
-import ComponentExamplesScreen from './ComponentExamplesScreen'
-import PluginExamplesScreen from './PluginExamplesScreen'
-import ThemeScreen from './ThemeScreen'
-import FaqScreen from './FaqScreen'
-import Calendar from './Calendar'
+import Calendar from './calendarscreens/Calendars'
 import TodoList from './TodoList'
 
 // Styles
@@ -92,11 +87,6 @@ class PresentationScreen extends React.Component {
 
 export default StackNavigator({
   PresentationScreen: {screen: PresentationScreen},
-  APITestingScreen: {screen: APITestingScreen},
-  ComponentExamplesScreen: {screen: ComponentExamplesScreen},
-  PluginExamplesScreen: {screen: PluginExamplesScreen},
-  ThemeScreen: {screen: ThemeScreen},
-  FaqScreen: {screen: FaqScreen},
   Calendar: {screen: Calendar},
   TodoList: {screen: TodoList}
 }, {

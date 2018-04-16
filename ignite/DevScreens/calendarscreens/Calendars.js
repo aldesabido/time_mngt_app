@@ -3,16 +3,19 @@ import {
   Text,
   StyleSheet,
   ScrollView,
-  View
+  View,
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import {Calendar} from 'react-native-calendars';
 import AgendaScreen from './Agenda';
+import { Images } from '../DevTheme';
 
 export default class CalendarsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selected: 'Today'
+      selected: ''
     };
     this.onDayPress = this.onDayPress.bind(this);
   }
@@ -27,6 +30,16 @@ export default class CalendarsScreen extends React.Component {
   render() {
     return (
       <ScrollView style={styles.container}>
+        <TouchableOpacity 
+            onPress={() => this.props.navigation.goBack()} 
+            style={{
+              //position: 'absolute',
+              paddingTop: 30,
+              paddingHorizontal: 5,
+              zIndex: 1
+            }}>
+              <Image source={Images.backButton} />
+        </TouchableOpacity>
         <Text style={styles.text}>Showing Agenda for: {this.state.selected}</Text>
         <Calendar
           onDayPress={this.onDayPress}
@@ -34,7 +47,7 @@ export default class CalendarsScreen extends React.Component {
           hideExtraDays
           markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
         />
-        <AgendaScreen value={this.state.selected} />
+        <AgendaScreen passprop={this.state.selected} />
       </ScrollView>
     );
   }

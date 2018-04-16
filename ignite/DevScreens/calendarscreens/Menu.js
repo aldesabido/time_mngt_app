@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 import { StackNavigator } from 'react-navigation'
 import Calendars from './Calendars'
-import CalendarsList from './CalendarsList'
+import CalendarsList from './CalendarsList' 
 
 class MenuScreen extends Component {
   constructor(props){
@@ -48,7 +48,6 @@ const styles = StyleSheet.create({
 });
 
 export default StackNavigator({
-  Menu: {screen: MenuScreen},
   Calendars: {screen: Calendars},
   CalendarsList: {screen: CalendarsList}
 })
