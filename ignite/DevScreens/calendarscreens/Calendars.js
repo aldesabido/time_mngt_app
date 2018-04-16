@@ -15,8 +15,9 @@ import { Images } from '../DevTheme';
 export default class CalendarsScreen extends React.Component {
   constructor(props) {
     super(props);
+    var { params } = this.props.navigation.state
     this.state = {
-      selected: ''
+      selected: params.passprop
     };
     this.onDayPress = this.onDayPress.bind(this);
   }
@@ -31,7 +32,7 @@ export default class CalendarsScreen extends React.Component {
     return (
       <ScrollView style={styles.container}>
         <TouchableOpacity 
-            onPress={() => this.props.navigation.goBack()} 
+            onPress={() => this.props.navigation.navigate('PresentationScreen')} 
             style={{
               //position: 'absolute',
               paddingTop: 30,

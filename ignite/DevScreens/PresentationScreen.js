@@ -36,7 +36,7 @@ class PresentationScreen extends React.Component {
   // }
 
   openCalendar = () => {
-    this.props.navigation.navigate('Calendar')
+    this.props.navigation.navigate('Calendar', {passprop: ''})
   }
 
   openTodoList = () => {
