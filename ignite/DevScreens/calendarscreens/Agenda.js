@@ -63,7 +63,7 @@ export default class AgendaScreen extends React.Component {
       newItems = JSON.parse(things);
       Reactotron.log("newItems: " + JSON.stringify(newItems));
       Reactotron.log("ComponentWillMount|| newItems: " + JSON.stringify(newItems));
-      this.setState({ items : newItems });
+      //this.setState({ items : newItems });
       this.setState({ allItems : newItems });
     });
     Reactotron.log("ComponentWillMount|| mounted!");
@@ -133,7 +133,7 @@ export default class AgendaScreen extends React.Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity
-            onPress={() => this.props.navigation.navigate('Calendar', {passprop: params.passprop})} 
+            onPress={() => {this.props.navigation.navigate('Calendar', {passprop: params.passprop})}} 
             style={styles.button}>
               <Text style={styles.buttonText}>back to Calendar</Text>
         </TouchableOpacity>
@@ -319,7 +319,7 @@ export default class AgendaScreen extends React.Component {
         Reactotron.log(`Load Items for ${strTime}`);
       }
 
-      AsyncStorage.getItem("AgendaScreenTest")
+      AsyncStorage.getItem("AgendaScrTest")
       .then((things) => {
         newItems = JSON.parse(things);
       
