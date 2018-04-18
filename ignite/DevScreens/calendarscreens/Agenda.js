@@ -132,9 +132,8 @@ export default class AgendaScreen extends React.Component {
     var {params} = this.props.navigation.state;
     return (
       <View style={styles.container}>
-        <TouchableOpacity 
-            onPress={() => this.props.navigation.goBack()} 
-            //onPress={() => this.props.navigation.navigate('Calendar', {passprop: params.passprop})} 
+        <TouchableOpacity
+            onPress={() => this.props.navigation.navigate('Calendar', {passprop: params.passprop})} 
             style={styles.button}>
               <Text style={styles.buttonText}>back to Calendar</Text>
         </TouchableOpacity>
