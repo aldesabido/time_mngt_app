@@ -32,7 +32,7 @@ export default class CalendarsScreen extends React.Component {
     return (
       <ScrollView style={styles.container}>
         <TouchableOpacity 
-            onPress={() => this.props.navigation.goBack()} 
+            onPress={() => this.props.navigation.navigate('PresentationScreen')} 
             style={{
               //position: 'absolute',
               paddingTop: 30,
