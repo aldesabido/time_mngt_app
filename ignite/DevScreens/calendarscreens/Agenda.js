@@ -14,23 +14,33 @@ import Calendars from './Calendars';
 import { Images } from '../DevTheme';
 import styles from './AgendaStyles'
 
-//imports by Dan huehue
 import ActionButton from 'react-native-action-button';
 import Modal from "react-native-modal";
 import DatePicker from 'react-native-datepicker';
+//another one
+import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
+Reactotron
+.configure()
+.use(asyncStorage())
+.connect();
 export default class AgendaScreen extends React.Component {
   constructor(props) {
     super(props);
     var {params} = this.props.navigation.state;
     this.state = {
       items: {},
+
       name: 'Activity Name',
       startTime: '',
       endTime: '',
       date: '',
+
+      itemsDay : {},
+
       selected: params.passprop,
       tasks: [],  //will contain the activities
+
       //Modal things switchers
       isMainModalVisible : false,
       isActivityModalVisible : false,
@@ -39,12 +49,21 @@ export default class AgendaScreen extends React.Component {
   }
 
   toggleMainModal = () =>{
+    this.setState({ date : this.state.selected});
     this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
   }
 
-  componentDidMount(){
-    Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
+  componentWillMount(){
+    Tasks.all(tasks => this.setState(
+      { 
+        tasks: tasks || [] ,
+      }
+    ));
     console.log("mounted!");
+  }
+
+  componentDidMount(){
+    const data = Storage.get();
   }
 
   onDayPress(day){
@@ -76,7 +95,27 @@ export default class AgendaScreen extends React.Component {
       console.log("Date: " + this.state.date);
       console.log("Start Time: " + this.state.startTime);
       console.log("End Time:" + this.state.endTime);
+      
+      const strTime = this.state.date;
+      if (!this.state.items[strTime]){
+        this.state.items[strTime] = [];
+        console.log(this.state.items[strTime]);
+      }
+      this.state.items[strTime].push({
+        height: 125,
+        name: this.state.name,
+        date : this.state.date,
+        startTime : this.state.startTime,
+        endTime : this.state.endTime,
+      });
+      const newItems = {};
+      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+      this.setState({
+        items: newItems
+      });
+      Storage.save(newItems);
     }
+    this.forceUpdate();
     this.toggleMainModal();
   }
 
@@ -271,8 +310,18 @@ export default class AgendaScreen extends React.Component {
             });
           }
         }
+        console.log(`Load Items for ${strTime}`);
       }
       //console.log(this.state.items);
+      
+      this.state.items['2018-04-17'].push({
+        height: 125,
+        name: "Hello There!",
+        date : "2018-04-17",
+        startTime : "12:00",
+        endTime : "13:00",
+      });
+
       const newItems = {};
       Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
       this.setState({
@@ -281,17 +330,28 @@ export default class AgendaScreen extends React.Component {
     }, 1000);
     // console.log(`Load Items for ${day.year}-${day.month}`);
     console.log("Items Loaded");
-  }
+    }
+  
 
   renderItem(item) {
     return (
-      <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
+      <View style={[styles.item, {height: item.height}]}>
+        <Text>name: {item.name} height: {item.height} </Text>
+        <Text>startTime: {item.startTime}</Text>
+        <Text>endTime: {item.endTime} </Text>
+      </View>
     );
   }
 
   renderEmptyDate() {
     return (
-      <View style={styles.emptyDate}><Text>This is empty date!</Text></View>
+      <View style={styles.emptyDate}>
+        <Text style={{textAlign: 'center'}}>This is empty date!</Text>
+        <TouchableOpacity
+          onPress={this.toggleMainModal}>
+            <Text style={styles.buttonText}>Make some activities</Text>
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -305,6 +365,7 @@ export default class AgendaScreen extends React.Component {
   }
 }
 
+//will handle opertaions with the tasks in the dropdown
 let Tasks = {
   convertToArrayOfObject(tasks, callback) {
     return callback(
@@ -323,3 +384,26 @@ let Tasks = {
     AsyncStorage.setItem("TASKS", this.convertToStringWithSeparators(tasks));
   }
 };
+
+let Storage = {
+  save(things){
+    AsyncStorage.setItem("AgendaEvents_001",JSON.stringify(things));
+  },
+  get(){
+    AsyncStorage.getItem("AgendaEvents_001", (events) => {
+      console.log(JSON.parse(events));
+      return JSON.parse(events);
+    });
+  },
+}
+
+/*
+// Saves to storage as a JSON-string
+AsyncStorage.setItem('key', JSON.stringify(false))
+
+// Retrieves from storage as boolean
+AsyncStorage.getItem('key', (value) => {
+    JSON.parse(value) // boolean false
+})
+
+*/
