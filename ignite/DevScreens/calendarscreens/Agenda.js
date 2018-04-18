@@ -32,6 +32,8 @@ export default class AgendaScreen extends React.Component {
     var {params} = this.props.navigation.state;
     this.state = {
       items: {},
+      
+      allItems : {},
 
       name: 'Activity Name',
       startTime: '',
@@ -62,6 +64,7 @@ export default class AgendaScreen extends React.Component {
       Reactotron.log("newItems: " + JSON.stringify(newItems));
       Reactotron.log("ComponentWillMount|| newItems: " + JSON.stringify(newItems));
       this.setState({ items : newItems });
+      this.setState({ allItems : newItems });
     });
     Reactotron.log("ComponentWillMount|| mounted!");
   }
@@ -75,7 +78,7 @@ export default class AgendaScreen extends React.Component {
   onDayPress(day){
     this.setState({
       selected: day.dateString,
-      //items : {}
+      items : {}
     });
     //this.props.navigation.navigate('Agenda', {passprop: day.dateString})
     this.forceUpdate();
@@ -130,7 +133,8 @@ export default class AgendaScreen extends React.Component {
     return (
       <View style={styles.container}>
         <TouchableOpacity 
-            onPress={() => this.props.navigation.navigate('Calendar', {passprop: params.passprop})} 
+            onPress={() => this.props.navigation.goBack()} 
+            //onPress={() => this.props.navigation.navigate('Calendar', {passprop: params.passprop})} 
             style={styles.button}>
               <Text style={styles.buttonText}>back to Calendar</Text>
         </TouchableOpacity>
@@ -139,9 +143,10 @@ export default class AgendaScreen extends React.Component {
         </Text>
         <Agenda
           items={this.state.items}
-          onDayPress={this.onDayPress}
+          onDayPress={this.onDayPress.bind(this)}
           loadItemsForMonth={this.loadItems.bind(this)}
-          selected={params.passprop}
+          selected={this.state.selected}
+          //selected={params.passprop}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
@@ -198,10 +203,6 @@ export default class AgendaScreen extends React.Component {
                       style={{ height: 200, width: 200}}
                       onValueChange={(itemValue, itemIndex) => this.setState({name: itemValue})}>
                       <Picker.Item label=" " value="blank" />
-                      {/*
-                      * TODO : get activities from aSyncStorage
-                      */}
-                      <Picker.Item label="Java" value="Java" />
                       {this.taskList()}
                     </Picker>
                     <TouchableOpacity 
@@ -309,39 +310,28 @@ export default class AgendaScreen extends React.Component {
       for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {           //if no events in this day based on item
+        if (!this.state.allItems[strTime]) {           //if no events in this day based on item
+        //if (!this.state.items[strTime]) {           //if no events in this day based on item
             //PROPOSAL : an allItems array on the state?
           this.state.items[strTime] = [];           //empty string so that the Agenda component will not think that it's still loading
         }else{                                      //if the day has events
-
+          this.state.items[strTime] = this.state.allItems[strTime];
         }
         Reactotron.log(`Load Items for ${strTime}`);
       }
-      /* 
-      manual push statement
-        try{
-          this.state.items['2018-04-17'].push({
-            height: 125,
-            name: "Hello There!",
-            date : "2018-04-17",
-            startTime : "12:00",
-            endTime : "13:00",
-          });
-        }
-        catch(err){}
-      */
-      newItems = AsyncStorage.getItem("AgendaScreenTest")
+
+      AsyncStorage.getItem("AgendaScreenTest")
       .then((things) => {
         newItems = JSON.parse(things);
-      });
       
-      //idk what this does
-      Object.keys(this.state.items).forEach(key => {
-        newItems[key] = this.state.items[key];
-      });
+        //idk what this does
+        Object.keys(this.state.items).forEach(key => {
+          newItems[key] = this.state.items[key];
+        });
 
-      this.setState({
-        items: newItems
+        this.setState({
+          allItems: newItems
+        });
       });
 
     }, 1000);
