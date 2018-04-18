@@ -20,10 +20,12 @@ import DatePicker from 'react-native-datepicker';
 //another one
 import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
+
 Reactotron
 .configure()
 .use(asyncStorage())
 .connect();
+
 export default class AgendaScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -35,11 +37,8 @@ export default class AgendaScreen extends React.Component {
       startTime: '',
       endTime: '',
       date: '',
-
-      itemsDay : {},
-
       selected: params.passprop,
-      tasks: [],  //will contain the activities
+      tasks: [],  //will contain the activities (for the dropdown)
 
       //Modal things switchers
       isMainModalVisible : false,
@@ -48,39 +47,38 @@ export default class AgendaScreen extends React.Component {
     this.onDayPress = this.onDayPress.bind(this);
   }
 
-  toggleMainModal = () =>{
-    this.setState({ date : this.state.selected});
-    this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
-  }
-
   componentWillMount(){
     Tasks.all(tasks => this.setState(
       { 
         tasks: tasks || [] ,
       }
     ));
-    console.log("mounted!");
+  
+    let newItems = {};
+    AsyncStorage.getItem("AgendaScrTest")
+    .then((things) => {
+      Reactotron.log("things: " + things);
+      newItems = JSON.parse(things);
+      Reactotron.log("newItems: " + JSON.stringify(newItems));
+      Reactotron.log("ComponentWillMount|| newItems: " + JSON.stringify(newItems));
+      this.setState({ items : newItems });
+    });
+    Reactotron.log("ComponentWillMount|| mounted!");
   }
 
-  componentDidMount(){
-    const data = Storage.get();
+  toggleMainModal = () =>{
+    Reactotron.log("State Items: " + JSON.stringify(this.state.items));
+    this.setState({ date : this.state.selected});
+    this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
   }
 
   onDayPress(day){
     this.setState({
       selected: day.dateString,
-      items : {}
+      //items : {}
     });
     //this.props.navigation.navigate('Agenda', {passprop: day.dateString})
     this.forceUpdate();
-  }
-
-  taskList() {
-    return this.state.tasks.map((tasks,index) => {
-      return (
-        <Picker.Item key={index} label={tasks.text} value={tasks.text} />
-      )
-    })
   }
 
   submitHandler(){
@@ -117,6 +115,14 @@ export default class AgendaScreen extends React.Component {
     }
     this.forceUpdate();
     this.toggleMainModal();
+  }
+
+  taskList() {
+    return this.state.tasks.map((tasks,index) => {
+      return (
+        <Picker.Item key={index} label={tasks.text} value={tasks.text} />
+      )
+    })
   }
 
   render() {
@@ -261,6 +267,8 @@ export default class AgendaScreen extends React.Component {
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               date={this.state.endTime}
+              minDate={this.state.startTime}
+              maxDate="23:59"
               customStyles={{
                 dateIcon: {
                   position: 'absolute',
@@ -297,50 +305,59 @@ export default class AgendaScreen extends React.Component {
 
   loadItems(day) {
     setTimeout(() => {
-      for (let i = -15; i < 1; i++) {
+      //this.forceUpdate();
+      for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
-        if (!this.state.items[strTime]) {
-          this.state.items[strTime] = [];
-          const numItems = Math.floor(Math.random() * 5);
-          for (let j = 0; j < numItems; j++) {
-            this.state.items[strTime].push({
-              name: 'Item for ' + strTime,
-              height: Math.max(50, Math.floor(Math.random() * 150))
-            });
-          }
+        if (!this.state.items[strTime]) {           //if no events in this day based on item
+            //PROPOSAL : an allItems array on the state?
+          this.state.items[strTime] = [];           //empty string so that the Agenda component will not think that it's still loading
+        }else{                                      //if the day has events
+
         }
-        console.log(`Load Items for ${strTime}`);
+        Reactotron.log(`Load Items for ${strTime}`);
       }
-      //console.log(this.state.items);
+      /* 
+      manual push statement
+        try{
+          this.state.items['2018-04-17'].push({
+            height: 125,
+            name: "Hello There!",
+            date : "2018-04-17",
+            startTime : "12:00",
+            endTime : "13:00",
+          });
+        }
+        catch(err){}
+      */
+      newItems = AsyncStorage.getItem("AgendaScreenTest")
+      .then((things) => {
+        newItems = JSON.parse(things);
+      });
       
-      this.state.items['2018-04-17'].push({
-        height: 125,
-        name: "Hello There!",
-        date : "2018-04-17",
-        startTime : "12:00",
-        endTime : "13:00",
+      //idk what this does
+      Object.keys(this.state.items).forEach(key => {
+        newItems[key] = this.state.items[key];
       });
 
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
       this.setState({
         items: newItems
       });
+
     }, 1000);
-    // console.log(`Load Items for ${day.year}-${day.month}`);
     console.log("Items Loaded");
-    }
+  }
   
 
   renderItem(item) {
-    return (
-      <View style={[styles.item, {height: item.height}]}>
-        <Text>name: {item.name} height: {item.height} </Text>
-        <Text>startTime: {item.startTime}</Text>
-        <Text>endTime: {item.endTime} </Text>
-      </View>
-    );
+      return (
+        <View style={[styles.item, {height: item.height}]}>
+          <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
+          <Text>startTime: {item.startTime}</Text>
+          <Text>endTime: {item.endTime} </Text>
+          <Text>date: {item.date} </Text>
+        </View>
+      )
   }
 
   renderEmptyDate() {
@@ -387,14 +404,9 @@ let Tasks = {
 
 let Storage = {
   save(things){
-    AsyncStorage.setItem("AgendaEvents_001",JSON.stringify(things));
-  },
-  get(){
-    AsyncStorage.getItem("AgendaEvents_001", (events) => {
-      console.log(JSON.parse(events));
-      return JSON.parse(events);
-    });
-  },
+    Reactotron.log("in Storage.save saving: " + JSON.stringify(things));
+    AsyncStorage.setItem("AgendaScrTest",JSON.stringify(things));
+  }
 }
 
 /*
@@ -402,8 +414,7 @@ let Storage = {
 AsyncStorage.setItem('key', JSON.stringify(false))
 
 // Retrieves from storage as boolean
-AsyncStorage.getItem('key', (value) => {
-    JSON.parse(value) // boolean false
+AsyncStorage.getItem('key')
+  .then((value)=>alert(value));
 })
-
 */
