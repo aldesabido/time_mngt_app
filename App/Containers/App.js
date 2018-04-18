@@ -6,6 +6,11 @@ import { Provider } from 'react-redux'
 import RootContainer from './RootContainer'
 import createStore from '../Redux'
 
+import Reactotron, { asyncStorage } from 'reactotron-react-native'
+Reactotron
+  .configure({ host: '192.168.2.121' })
+  .use(asyncStorage())
+  .connect()
 // create our store
 const store = createStore()
 

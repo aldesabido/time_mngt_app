@@ -56,3 +56,4 @@ buck-out/
 #
 .env
 .expo
+ignite/DevScreens/ActivityAdding.js
