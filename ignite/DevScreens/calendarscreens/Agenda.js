@@ -46,6 +46,8 @@ export default class AgendaScreen extends React.Component {
       endTime: '',
       date: '',
       selected: params.passprop,
+      id : '',
+
       tasks: [],  //will contain the activities (for the dropdown)
 
       //Modal things switchers
@@ -84,14 +86,16 @@ export default class AgendaScreen extends React.Component {
     Reactotron.log("ComponentWillMount|| mounted!");
   }
 
-  handleEdit = (item) => {
+  handleEditClick = (item) => {
     this.setState({ 
+      id : item.id,
       name : item.name,
       date : item.date,
       startTime : item.startTime,
       endTime : item.endTime,
     });
     Reactotron.log("Item details:\n"
+    + "\ID: " + item.id 
     + "\nName: " + item.name 
     + "\nDate: " + item.date
     + "\nstartTime: " + item.startTime
@@ -99,11 +103,69 @@ export default class AgendaScreen extends React.Component {
     this.setState({ 
       isEditModalVisible: ! this.state.isEditModalVisible 
     });
-    
   }
 
+  handleEditSubmit = () => {
+    let hasName = this.state.name.trim().length > 0;
+    let hasDate = this.state.date != '';
+    let hasStart = this.state.startTime != '';
+    let hasEnd = this.state.endTime != '';
+
+    if(hasName && hasDate && hasStart && hasEnd){
+      Reactotron.log("Submission valid; Ready for submission\n"
+      + "\ID: " + this.state.id
+      + "\nName: " + this.state.name
+      + "\nDate: " + this.state.date
+      + "\nStart Time: " + this.state.startTime
+      + "\nEnd Time:" + this.state.endTime);
+
+      const strTime = this.state.date;            //gets the date
+      if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+        this.state.allItems[strTime] = [];         //initializes the key 
+      }
+
+      //looks at all the events for all the days
+      targetDateReference = this.state.allItems;
+      for ( date in targetDateReference ){
+        Reactotron.log("TargetDateReference[date]: " + JSON.stringify(targetDateReference[date]));
+        for( event in targetDateReference[date]){
+          if(targetDateReference[date][event].id == this.state.id){
+            Reactotron.log("Found!\nNew Values:\n"
+            + "\ID: " + this.state.id
+            + "\nName: " + this.state.name
+            + "\nDate: " + this.state.date
+            + "\nStart Time: " + this.state.startTime
+            + "\nEnd Time:" + this.state.endTime);
+            targetDateReference[date][event].name = this.state.name;
+            targetDateReference[date][event].date = this.state.date;
+            targetDateReference[date][event].startTime = this.state.startTime;
+            targetDateReference[date][event].endTime = this.state.endTime;
+          }
+        }
+      }
+      Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
+      const newItems = {};                      //initializes a new 
+
+      Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
+      if(newItems[strTime].length > 1){
+        newItems[strTime].sort(function( event1 , event2 ){
+          Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+          return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+        });     //sorts the temp array
+      }
+      
+      this.setState({
+        allItems: newItems,
+        isEditModalVisible : !this.state.isEditModalVisible,
+        selected : this.state.selected,
+      },()=> {this.forceUpdate()});
+      Storage.save(newItems);
+      this.forceUpdate();
+    }
+  }
+
+
   toggleMainModal = () =>{
-    Reactotron.log("State Items: " + JSON.stringify(this.state.items));
     this.setState({ date : this.state.selected});
     this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
   }
@@ -129,31 +191,6 @@ export default class AgendaScreen extends React.Component {
       + "\nDate: " + this.state.date
       + "\nStart Time: " + this.state.startTime
       + "\nEnd Time:" + this.state.endTime);
-
-/*
-      const strTime = this.state.date;          //gets the date
-      if (!this.state.items[strTime]){          //if the date is not already a key in the array
-        this.state.items[strTime] = [];         //initializes the key 
-        console.log(this.state.items[strTime]);
-      }
-      this.state.items[strTime].push({
-        height: 125,
-        name: this.state.name,
-        date : this.state.date,
-        startTime : this.state.startTime,
-        endTime : this.state.endTime,
-      });
-      const newItems = {};
-      Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
-      newItems[strTime].sort(function( event1 , event2 ){
-        Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
-        return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
-      });     //sorts the temp array
-      this.setState({
-        items: newItems
-      });
-      Storage.save(newItems);
-*/
 
       const strTime = this.state.date;          //gets the date
       if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
@@ -216,19 +253,6 @@ export default class AgendaScreen extends React.Component {
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
           hideKnob = {true}
-          // markingType={'period'}
-          // markedDates={{
-          //    '2017-05-08': {textColor: '#666'},
-          //    '2017-05-09': {textColor: '#666'},
-          //    '2017-05-14': {startingDay: true, endingDay: true, color: 'blue'},
-          //    '2017-05-21': {startingDay: true, color: 'blue'},
-          //    '2017-05-22': {endingDay: true, color: 'gray'},
-          //    '2017-05-24': {startingDay: true, color: 'gray'},
-          //    '2017-05-25': {color: 'gray'},
-          //    '2017-05-26': {endingDay: true, color: 'gray'}}}
-          // monthFormat={'yyyy'}
-          // theme={{calendarBackground: 'red', agendaKnobColor: 'green'}}
-          //renderDay={(day, item) => (<Text>{day ? day.day: 'item'}</Text>)}
         />
         <ActionButton
           buttonColor="rgba(231,76,60,1)"
@@ -236,7 +260,7 @@ export default class AgendaScreen extends React.Component {
         />
         {
           /*
-          *
+          * ADDING MODAL
           * Form Component what will show up on action button click start here
           * Basically Modal things start here
           */
@@ -365,6 +389,146 @@ export default class AgendaScreen extends React.Component {
           </View>
           
         </Modal>
+        {
+          /*
+          * EDITING MODAL
+          * Form Component what will show up on an element click start here
+          * Basically another set of modal things start here
+          */
+        }
+        <Modal isVisible={this.state.isEditModalVisible}>
+          <View style={styles.formContainer}>
+          {//HEADERRRRRR
+          }
+          <Text>Edit an Activity</Text>
+          {//Name field
+          }
+            <TouchableOpacity
+                onPress={() => this.setState({isActivityModalVisible : !this.state.isActivityModalVisible})} 
+                style={styles.notAButton}>
+                  <Text style={styles.buttonText}>{this.state.name}</Text>
+            </TouchableOpacity>
+            <View style={styles.activityContainer}>
+              <Modal 
+                isVisible={this.state.isActivityModalVisible}
+                style={styles.formContainerActivity}>
+                  <View style={styles.miniFormContainerActivity}>
+                    <TouchableOpacity 
+                        disabled = {true} 
+                        style={styles.notAButton}>
+                          <Text style={styles.buttonText}>Choose an activity</Text>
+                    </TouchableOpacity>
+                    <Picker
+                      selectedValue={this.state.name}
+                      style={{ height: 200, width: 200}}
+                      onValueChange={(itemValue, itemIndex) => this.setState({name: itemValue})}>
+                      <Picker.Item label=" " value="blank" />
+                      {this.taskList()}
+                    </Picker>
+                    <TouchableOpacity 
+                        onPress={() => this.setState({isActivityModalVisible : !this.state.isActivityModalVisible})} 
+                        style={styles.button}>
+                          <Text style={styles.buttonText}>OK</Text>
+                    </TouchableOpacity>
+                  </View>
+                </Modal>
+              </View>
+          {//Date fields
+          }
+            <Text>Input Date:</Text>
+            <DatePicker
+              style={styles.formComp}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate="2018-04-01"
+              maxDate="2048-12-31"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(date) => {this.setState({date: date})}}
+            />
+            <Text>Input Start Time:</Text>
+            <DatePicker
+              style={styles.formComp}
+              mode="time"
+              placeholder="select start time"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              date={this.state.startTime}
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(time) => {this.setState({startTime: time , endTime:time})}}
+            />
+            <Text>Input End Time:</Text>
+            <DatePicker
+              style={styles.formComp}
+              mode="time"
+              placeholder="select end time"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              date={this.state.endTime}
+              minDate={this.state.startTime}
+              maxDate="23:59"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0
+                },
+                dateInput: {
+                  marginLeft: 36
+                }
+              }}
+              onDateChange={(time) => {this.setState({endTime: time})}}
+            />
+          {//SUBMIT and CANCEL button
+          }
+            <TouchableOpacity
+                  onPress={this.handleEditSubmit.bind(this)}
+                  style={styles.button}>
+                    <Text style={styles.buttonText}> S U B M I T </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                  onPress={() => this.setState({isEditModalVisible : !this.state.isEditModalVisible})}
+                  style={styles.Button}>
+                    <Text style={styles.buttonTextDest}> C A N C E L </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                  onPress={() => {
+                    Reactotron.log("Chill right there, Monika, this isn't implemented yet",true); 
+                    this.setState({isEditModalVisible : !this.state.isEditModalVisible}
+                  )}}
+                  style={styles.Button}>
+                    <Text style={styles.buttonTextDest}> D E L E T E</Text>
+            </TouchableOpacity>
+
+          </View>
+          
+        </Modal>
       </View>
     );
   }
@@ -372,7 +536,7 @@ export default class AgendaScreen extends React.Component {
   loadItems(day) {
     setTimeout(() => {
       //this.forceUpdate();
-      //for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
+      //for (let i = 0; i < 1; i++) {               //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
         const time = day.timestamp + 0 * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
         if (!this.state.allItems[strTime]) {        //if no events in this day based on item
@@ -395,17 +559,19 @@ export default class AgendaScreen extends React.Component {
         Reactotron.log(`Load Items for ${strTime}`);
       //}
 
+      //this is here so the first-time-initialized date in the array will be saved in the local storage
       AsyncStorage.getItem("AgendaScrTestnewStorageTest_001_withIDs")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
-        //idk what this does
+        //maps each entry in 
         Object.keys(this.state.items).forEach(key => {
           newItems[key] = this.state.items[key];
         });
 
         this.setState({
-          allItems: newItems
+          allItems: newItems,
+          id : '',
         });
 
         Storage.save(newItems);
@@ -418,7 +584,7 @@ export default class AgendaScreen extends React.Component {
   renderItem(item) {
     //could make a 24-hour to 12-hour converter
       return (
-        <TouchableOpacity onPress={this.handleEdit.bind(this,item)} >
+        <TouchableOpacity onPress={this.handleEditClick.bind(this,item)} >
           <View style={[styles.item, {height: item.height}]}>
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
             <Text>{item.startTime}--{item.endTime}</Text>
