@@ -22,7 +22,7 @@ import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 /*
 * the key for the localStorage is
-*       "AgendaScrTest" 
+*       "AgendaScrTestnewStorageTest_000" 
 *   change it here with [Change all Occurrences] if you want to change
 */
 
@@ -62,15 +62,23 @@ export default class AgendaScreen extends React.Component {
     ));
   
     let newItems = {};
-    AsyncStorage.getItem("AgendaScrTest")
+
+   AsyncStorage.getItem("AgendaScrTestnewStorageTest_000")
     .then((things) => {
-      Reactotron.log("things: " + things);
-      newItems = JSON.parse(things);
-      Reactotron.log("newItems: " + JSON.stringify(newItems));
-      Reactotron.log("ComponentWillMount|| newItems: " + JSON.stringify(newItems));
-      //this.setState({ items : newItems });
-      this.setState({ allItems : newItems });
-    });
+      if(things){
+        Reactotron.log("things found!");
+        newItems = JSON.parse(things);
+        this.setState({ allItems : newItems });
+      }
+      else{
+        Storage.save(newItems);
+        this.forceUpdate();
+      }
+    })
+    .catch((reason) => {
+      Reactotron.log("Something happened :(",true);
+      throw reason;
+    })
     Reactotron.log("ComponentWillMount|| mounted!");
   }
 
@@ -96,11 +104,11 @@ export default class AgendaScreen extends React.Component {
     let hasEnd = this.state.endTime != '';
 
     if(hasName && hasDate && hasStart && hasEnd){
-      console.log("Ready for submission");
-      console.log("Name: " + this.state.name);
-      console.log("Date: " + this.state.date);
-      console.log("Start Time: " + this.state.startTime);
-      console.log("End Time:" + this.state.endTime);
+      Reactotron.log("Ready for submission\n"
+      + "\nName: " + this.state.name
+      + "\nDate: " + this.state.date
+      + "\nStart Time: " + this.state.startTime
+      + "\nEnd Time:" + this.state.endTime);
       
       const strTime = this.state.date;
       if (!this.state.items[strTime]){
@@ -315,13 +323,14 @@ export default class AgendaScreen extends React.Component {
   loadItems(day) {
     setTimeout(() => {
       //this.forceUpdate();
-      for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
-        const time = day.timestamp + i * 24 * 60 * 60 * 1000;
+      //for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
+        const time = day.timestamp + 0 * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
         if (!this.state.allItems[strTime]) {        //if no events in this day based on item
           this.state.items[strTime] = [];           //empty string so that the Agenda component will not think that it's still loading
         }else{                                      //if the day has events
           let array = [];
+          //array[strTime] = this.state.allItems[strTime].slice(0);               //stores to temp array
           array[strTime] = this.state.allItems[strTime].slice(0);               //stores to temp array
           Reactotron.log("loadItems || unsorted array: \n" + JSON.stringify(array[strTime]));
           array[strTime]
@@ -335,9 +344,9 @@ export default class AgendaScreen extends React.Component {
           //this.state.items[strTime] = this.state.allItems[strTime];  //original code (only line in this block)
         }
         Reactotron.log(`Load Items for ${strTime}`);
-      }
+      //}
 
-      AsyncStorage.getItem("AgendaScrTest")         //gets data from asyncstorage
+      AsyncStorage.getItem("AgendaScrTestnewStorageTest_000")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -359,13 +368,15 @@ export default class AgendaScreen extends React.Component {
   
 
   renderItem(item) {
+    //could make a 24-hour to 12-hour converter
       return (
-        <View style={[styles.item, {height: item.height}]}>
-          <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
-          <Text>startTime: {item.startTime}</Text>
-          <Text>endTime: {item.endTime} </Text>
-          <Text>date: {item.date} </Text>
-        </View>
+        <TouchableOpacity>
+          <View style={[styles.item, {height: item.height}]}>
+            <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
+            <Text>{item.startTime}-{item.endTime}</Text>
+            <Text>date: {item.date} </Text>
+          </View>
+        </TouchableOpacity>
       )
   }
 
@@ -414,7 +425,7 @@ let Tasks = {
 let Storage = {
   save(things){
     Reactotron.log("in Storage.save saving: " + JSON.stringify(things));
-    AsyncStorage.setItem("AgendaScrTest",JSON.stringify(things));
+    AsyncStorage.setItem("AgendaScrTestnewStorageTest_000",JSON.stringify(things));
   }
 }
 
