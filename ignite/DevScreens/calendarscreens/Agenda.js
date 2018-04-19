@@ -126,6 +126,7 @@ export default class AgendaScreen extends React.Component {
 
       //looks at all the events for all the days
       targetDateReference = this.state.allItems;
+      newSpecItems = this.state.items;
       for ( date in targetDateReference ){
         Reactotron.log("TargetDateReference[date]: " + JSON.stringify(targetDateReference[date]));
         for( event in targetDateReference[date]){
@@ -140,11 +141,60 @@ export default class AgendaScreen extends React.Component {
             targetDateReference[date][event].date = this.state.date;
             targetDateReference[date][event].startTime = this.state.startTime;
             targetDateReference[date][event].endTime = this.state.endTime;
+            break;
+          }
+        }
+      }
+
+
+      Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
+      const newItems = {};                      //initializes a new 
+
+      Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
+      if(newItems[strTime].length > 1){
+        newItems[strTime].sort(function( event1 , event2 ){
+          Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+          return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+        });     //sorts the temp array
+      }
+      
+      this.setState({
+        allItems: newItems,
+        isEditModalVisible : !this.state.isEditModalVisible,
+        selected : this.state.date,
+        items : newSpecItems,
+      },()=> {this.forceUpdate()});
+      Storage.save(newItems);
+      this.forceUpdate();
+    }
+  } 
+  
+  handleDelete = () => {
+      const strTime = this.state.date;            //gets the date
+      if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+        this.state.allItems[strTime] = [];         //initializes the key 
+      }
+
+      //looks at all the events for all the days
+      targetDateReference = this.state.allItems;
+      for ( date in targetDateReference ){
+        Reactotron.log("TargetDateReference[date]: " + JSON.stringify(targetDateReference[date]));
+        for( event in targetDateReference[date]){
+          if(targetDateReference[date][event].id == this.state.id){
+            Reactotron.log("Found!\nNew Values:\n"
+            + "\ID: " + this.state.id
+            + "\nName: " + this.state.name
+            + "\nDate: " + this.state.date
+            + "\nStart Time: " + this.state.startTime
+            + "\nEnd Time:" + this.state.endTime);
+            //DELET DELET DELET
+            targetDateReference[date].splice([event],1);
+            break;
           }
         }
       }
       Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
-      const newItems = {};                      //initializes a new 
+      const newItems = {};                     
 
       Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
       if(newItems[strTime].length > 1){
@@ -161,8 +211,8 @@ export default class AgendaScreen extends React.Component {
       },()=> {this.forceUpdate()});
       Storage.save(newItems);
       this.forceUpdate();
-    }
   }
+
 
 
   toggleMainModal = () =>{
@@ -518,10 +568,7 @@ export default class AgendaScreen extends React.Component {
             </TouchableOpacity>
 
             <TouchableOpacity
-                  onPress={() => {
-                    Reactotron.log("Chill right there, Monika, this isn't implemented yet",true); 
-                    this.setState({isEditModalVisible : !this.state.isEditModalVisible}
-                  )}}
+                  onPress={this.handleDelete.bind(this)}
                   style={styles.Button}>
                     <Text style={styles.buttonTextDest}> D E L E T E</Text>
             </TouchableOpacity>
