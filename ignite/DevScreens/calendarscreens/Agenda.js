@@ -15,14 +15,15 @@ import { Images } from '../DevTheme';
 import styles from './AgendaStyles'
 
 import ActionButton from 'react-native-action-button';
-import Modal from "react-native-modal";
+import Modal from 'react-native-modal';
 import DatePicker from 'react-native-datepicker';
-//another one
 import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
+//another one
+import uuid from 'uuid';
 /*
 * the key for the localStorage is
-*       "AgendaScrTestnewStorageTest_001" 
+*       "AgendaScrTestnewStorageTest_001_withIDs" 
 *   change it here with [Change all Occurrences] if you want to change
 */
 
@@ -64,7 +65,7 @@ export default class AgendaScreen extends React.Component {
   
     let newItems = {};
 
-   AsyncStorage.getItem("AgendaScrTestnewStorageTest_001")
+   AsyncStorage.getItem("AgendaScrTestnewStorageTest_001_withIDs")
     .then((things) => {
       if(things){
         Reactotron.log("things found!");
@@ -128,7 +129,8 @@ export default class AgendaScreen extends React.Component {
       + "\nDate: " + this.state.date
       + "\nStart Time: " + this.state.startTime
       + "\nEnd Time:" + this.state.endTime);
-      /*
+
+/*
       const strTime = this.state.date;          //gets the date
       if (!this.state.items[strTime]){          //if the date is not already a key in the array
         this.state.items[strTime] = [];         //initializes the key 
@@ -159,6 +161,7 @@ export default class AgendaScreen extends React.Component {
       }
       this.state.allItems[strTime].push({       //pushes the values into the array
         height: 125,
+        id: uuid.v4(),
         name: this.state.name,
         date : this.state.date,
         startTime : this.state.startTime,
@@ -166,7 +169,7 @@ export default class AgendaScreen extends React.Component {
       });
       const newItems = {};                      //initializes a new 
 
-        Object.keys(this.state.allItems).forEach(key => {newItems[key] = this.state.allItems[key];});
+        Object.keys(this.state.allItems).forEach(key => {newItems[key] = this.state.allItems[key];}); 
         if(newItems[strTime].length > 1){
           newItems[strTime].sort(function( event1 , event2 ){
             Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
@@ -392,7 +395,7 @@ export default class AgendaScreen extends React.Component {
         Reactotron.log(`Load Items for ${strTime}`);
       //}
 
-      AsyncStorage.getItem("AgendaScrTestnewStorageTest_001")         //gets data from asyncstorage
+      AsyncStorage.getItem("AgendaScrTestnewStorageTest_001_withIDs")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -412,7 +415,6 @@ export default class AgendaScreen extends React.Component {
     console.log("Items Loaded");
   }
   
-
   renderItem(item) {
     //could make a 24-hour to 12-hour converter
       return (
@@ -421,6 +423,7 @@ export default class AgendaScreen extends React.Component {
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
             <Text>{item.startTime}--{item.endTime}</Text>
             <Text>date: {item.date} </Text>
+            <Text>id: {item.id} </Text>
           </View>
         </TouchableOpacity>
       )
@@ -471,16 +474,6 @@ let Tasks = {
 let Storage = {
   save(things){
     Reactotron.log("in Storage.save saving: " + JSON.stringify(things));
-    AsyncStorage.setItem("AgendaScrTestnewStorageTest_001",JSON.stringify(things));
+    AsyncStorage.setItem("AgendaScrTestnewStorageTest_001_withIDs",JSON.stringify(things));
   }
 }
-
-/*
-// Saves to storage as a JSON-string
-AsyncStorage.setItem('key', JSON.stringify(false))
-
-// Retrieves from storage as boolean
-AsyncStorage.getItem('key')
-  .then((value)=>alert(value));
-})
-*/
