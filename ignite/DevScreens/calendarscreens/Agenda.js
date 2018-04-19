@@ -20,6 +20,11 @@ import DatePicker from 'react-native-datepicker';
 //another one
 import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
+/*
+* the key for the localStorage is
+*       "AgendaScrTest" 
+*   change it here with [Change all Occurrences] if you want to change
+*/
 
 Reactotron
 .configure()
@@ -111,6 +116,10 @@ export default class AgendaScreen extends React.Component {
       });
       const newItems = {};
       Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+      newItems[strTime].sort(function( event1 , event2 ){
+        Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+        return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+      });     //sorts the temp array
       this.setState({
         items: newItems
       });
@@ -309,17 +318,26 @@ export default class AgendaScreen extends React.Component {
       for (let i = 0; i < 1; i++) {                 //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
         const time = day.timestamp + i * 24 * 60 * 60 * 1000;
         const strTime = this.timeToString(time);
-        if (!this.state.allItems[strTime]) {           //if no events in this day based on item
-        //if (!this.state.items[strTime]) {           //if no events in this day based on item
-            //PROPOSAL : an allItems array on the state?
+        if (!this.state.allItems[strTime]) {        //if no events in this day based on item
           this.state.items[strTime] = [];           //empty string so that the Agenda component will not think that it's still loading
         }else{                                      //if the day has events
-          this.state.items[strTime] = this.state.allItems[strTime];
+          let array = [];
+          array[strTime] = this.state.allItems[strTime].slice(0);               //stores to temp array
+          Reactotron.log("loadItems || unsorted array: \n" + JSON.stringify(array[strTime]));
+          array[strTime]
+            .sort(function( event1 , event2 ){
+              Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+              return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+            });     //sorts the temp array
+
+          Reactotron.log("loadItems || sorted array: \n" + JSON.stringify(array[strTime]));
+          this.state.items[strTime] = array[strTime];                  //gives the sorted array to this.state.items[strTime]
+          //this.state.items[strTime] = this.state.allItems[strTime];  //original code (only line in this block)
         }
         Reactotron.log(`Load Items for ${strTime}`);
       }
 
-      AsyncStorage.getItem("AgendaScrTest")
+      AsyncStorage.getItem("AgendaScrTest")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -331,6 +349,8 @@ export default class AgendaScreen extends React.Component {
         this.setState({
           allItems: newItems
         });
+
+        Storage.save(newItems);
       });
 
     }, 1000);
