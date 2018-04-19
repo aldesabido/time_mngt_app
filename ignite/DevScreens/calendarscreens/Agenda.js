@@ -22,7 +22,7 @@ import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 /*
 * the key for the localStorage is
-*       "AgendaScrTestnewStorageTest_000" 
+*       "AgendaScrTestnewStorageTest_001" 
 *   change it here with [Change all Occurrences] if you want to change
 */
 
@@ -50,6 +50,7 @@ export default class AgendaScreen extends React.Component {
       //Modal things switchers
       isMainModalVisible : false,
       isActivityModalVisible : false,
+      isEditModalVisible : false,
     }
     this.onDayPress = this.onDayPress.bind(this);
   }
@@ -63,7 +64,7 @@ export default class AgendaScreen extends React.Component {
   
     let newItems = {};
 
-   AsyncStorage.getItem("AgendaScrTestnewStorageTest_000")
+   AsyncStorage.getItem("AgendaScrTestnewStorageTest_001")
     .then((things) => {
       if(things){
         Reactotron.log("things found!");
@@ -80,6 +81,24 @@ export default class AgendaScreen extends React.Component {
       throw reason;
     })
     Reactotron.log("ComponentWillMount|| mounted!");
+  }
+
+  handleEdit = (item) => {
+    this.setState({ 
+      name : item.name,
+      date : item.date,
+      startTime : item.startTime,
+      endTime : item.endTime,
+    });
+    Reactotron.log("Item details:\n"
+    + "\nName: " + item.name 
+    + "\nDate: " + item.date
+    + "\nstartTime: " + item.startTime
+    + "\nendTime: " + item.endTime)
+    this.setState({ 
+      isEditModalVisible: ! this.state.isEditModalVisible 
+    });
+    
   }
 
   toggleMainModal = () =>{
@@ -109,10 +128,10 @@ export default class AgendaScreen extends React.Component {
       + "\nDate: " + this.state.date
       + "\nStart Time: " + this.state.startTime
       + "\nEnd Time:" + this.state.endTime);
-      
-      const strTime = this.state.date;
-      if (!this.state.items[strTime]){
-        this.state.items[strTime] = [];
+      /*
+      const strTime = this.state.date;          //gets the date
+      if (!this.state.items[strTime]){          //if the date is not already a key in the array
+        this.state.items[strTime] = [];         //initializes the key 
         console.log(this.state.items[strTime]);
       }
       this.state.items[strTime].push({
@@ -130,6 +149,33 @@ export default class AgendaScreen extends React.Component {
       });     //sorts the temp array
       this.setState({
         items: newItems
+      });
+      Storage.save(newItems);
+*/
+
+      const strTime = this.state.date;          //gets the date
+      if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+        this.state.allItems[strTime] = [];         //initializes the key 
+      }
+      this.state.allItems[strTime].push({       //pushes the values into the array
+        height: 125,
+        name: this.state.name,
+        date : this.state.date,
+        startTime : this.state.startTime,
+        endTime : this.state.endTime,
+      });
+      const newItems = {};                      //initializes a new 
+
+        Object.keys(this.state.allItems).forEach(key => {newItems[key] = this.state.allItems[key];});
+        if(newItems[strTime].length > 1){
+          newItems[strTime].sort(function( event1 , event2 ){
+            Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+            return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+          });     //sorts the temp array
+        }
+      
+      this.setState({
+        allItems: newItems
       });
       Storage.save(newItems);
     }
@@ -346,7 +392,7 @@ export default class AgendaScreen extends React.Component {
         Reactotron.log(`Load Items for ${strTime}`);
       //}
 
-      AsyncStorage.getItem("AgendaScrTestnewStorageTest_000")         //gets data from asyncstorage
+      AsyncStorage.getItem("AgendaScrTestnewStorageTest_001")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -370,10 +416,10 @@ export default class AgendaScreen extends React.Component {
   renderItem(item) {
     //could make a 24-hour to 12-hour converter
       return (
-        <TouchableOpacity>
+        <TouchableOpacity onPress={this.handleEdit.bind(this,item)} >
           <View style={[styles.item, {height: item.height}]}>
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
-            <Text>{item.startTime}-{item.endTime}</Text>
+            <Text>{item.startTime}--{item.endTime}</Text>
             <Text>date: {item.date} </Text>
           </View>
         </TouchableOpacity>
@@ -425,7 +471,7 @@ let Tasks = {
 let Storage = {
   save(things){
     Reactotron.log("in Storage.save saving: " + JSON.stringify(things));
-    AsyncStorage.setItem("AgendaScrTestnewStorageTest_000",JSON.stringify(things));
+    AsyncStorage.setItem("AgendaScrTestnewStorageTest_001",JSON.stringify(things));
   }
 }
 
