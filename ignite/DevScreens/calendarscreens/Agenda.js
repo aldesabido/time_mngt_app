@@ -133,6 +133,7 @@ export default class AgendaScreen extends React.Component {
         const strTime = this.state.date;            //gets the date
         if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
           this.state.allItems[strTime] = [];         //initializes the key 
+          this.state.items[strTime] = [];
         }
 
         //looks at all the events for all the days
@@ -158,10 +159,22 @@ export default class AgendaScreen extends React.Component {
           }
         }
 
+        if(!newSpecItems['1970-01-01']){
+          newSpecItems['1970-01-01'] = [];
+        }
+        newSpecItems['1970-01-01'].push({
+          height : 125,
+          id: 123,
+          name: 'lmao',
+          date: '1970-01-01',
+          startTime: '00:00',
+          endTime: '01:00',
+        });
 
         Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
         const newItems = {};                      //initializes a new 
-
+        const newDispItems = {};
+        //sorting for the all-containing array
         Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
         if(newItems[strTime].length > 1){
           newItems[strTime].sort(function( event1 , event2 ){
@@ -169,12 +182,21 @@ export default class AgendaScreen extends React.Component {
             return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
           });     //sorts the temp array
         }
-        
+
+        //sorting for the daily container array
+        Object.keys(newSpecItems).forEach(key => {newDispItems[key] = newSpecItems[key];}); 
+        if(newDispItems[strTime].length > 1){
+          newDispItems[strTime].sort(function( event1 , event2 ){
+            Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+            return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+          });     //sorts the temp array
+        }
+
         this.setState({
           allItems: newItems,
           isEditModalVisible : !this.state.isEditModalVisible,
           selected : this.state.date,
-          items : newSpecItems,
+          items : newDispItems,
         },()=> {this.forceUpdate()});
         Storage.save(newItems);
       }else{
@@ -256,12 +278,14 @@ export default class AgendaScreen extends React.Component {
     targetDateReference = this.state.allItems;
     for ( event in targetDateReference[date] ){
       let startHasConflict = (
-        (targetDateReference[date][event].startTime < start && targetDateReference[date][event].endTime > start) 
-        && targetDateReference[date][event].id != id
+        (targetDateReference[date][event].startTime <= start && targetDateReference[date][event].endTime >= start)    //if start directly coincides with another event
+        && targetDateReference[date][event].id != id                                                                //useful when updating an event
+        && (targetDateReference[date][event].startTime >= start && targetDateReference[date][event].endTime >= start) //when the start of event overlaps over other events
       )
       let endHasConflict = (
-        (targetDateReference[date][event].startTime < end && targetDateReference[date][event].endTime > end) 
-        && targetDateReference[date][event].id != id
+        (targetDateReference[date][event].startTime <= end && targetDateReference[date][event].endTime >= end)        //if end directly coincides with another event
+        && targetDateReference[date][event].id != id                                                                //useful when updating an event
+        && (targetDateReference[data][event].strTime <= end && targetDateReference[date][event].endTime <= end)       //when the end of event overlaps other events
       )
       if( startHasConflict || endHasConflict ){
         return false;
@@ -320,6 +344,7 @@ export default class AgendaScreen extends React.Component {
       this.toggleMainModal();
       alert("Input error!\nEntry not recorded!");
     }
+    this.toggleMainModal();
     this.forceUpdate();
   }
 
@@ -629,7 +654,7 @@ export default class AgendaScreen extends React.Component {
               }}
               onDateChange={(time) => {this.setState({endTime: time})}}
             />
-          {//SUBMIT and CANCEL button
+          {//SUBMIT, CANCEL, and DELETE button
           }
             <TouchableOpacity
                   onPress={this.handleEditSubmit.bind(this)}
@@ -645,8 +670,8 @@ export default class AgendaScreen extends React.Component {
 
             <TouchableOpacity
                   onPress={this.handleDelete.bind(this)}
-                  style={styles.Button}>
-                    <Text style={styles.buttonTextDest}> D E L E T E</Text>
+                  style={[styles.Button, {paddingTop: 30}]}>
+                    <Text style={styles.buttonTextDest}> D E L E T E </Text>
             </TouchableOpacity>
 
           </View>
