@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import { Fonts, Colors, Metrics } from '../../../App/Themes'
 
 import {
     Platform
@@ -55,5 +56,47 @@ export default StyleSheet.create({
       borderColor: "gray",
       borderWidth: isAndroid ? 0 : 1,
       width: "100%"
-    }
+    },
+    formContainerActivity:{
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingBottom: 50,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    miniFormContainerActivity:{
+      width: 200,
+      height: 300,
+      backgroundColor: "#FFE5E5",
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    button: {
+      height: 45,
+      width: 150,
+      borderRadius: 5,
+      borderWidth: 2,
+      marginHorizontal: Metrics.section,
+      marginVertical: Metrics.baseMargin,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    buttonText: {
+      color: 'black',
+      textAlign: 'center',
+      fontWeight: 'bold',
+      fontSize: Fonts.size.medium,
+      marginVertical: Metrics.baseMargin
+    },
+    buttonTextDest: {
+      color: 'red',
+      textAlign: 'center',
+      fontWeight: 'bold',
+      fontSize: Fonts.size.medium,
+      marginVertical: Metrics.baseMargin
+    },
 })

@@ -18,21 +18,32 @@ import {
 } from "react-native";
 import { Images } from './DevTheme'
 
+import Reactotron, { asyncStorage } from 'reactotron-react-native'
+
 // Styles
 import styles from './Styles/TodoListStyles'
+
+import Modal from 'react-native-modal';
+//yep, you read that right modal once again
 
 const isAndroid = Platform.OS == "android";
 const viewPadding = 10;
 
 export default class TodoList extends Component {
-  state = {
-    tasks: [],
-    text: ""
-  };
+  constructor(props){
+    super(props);
+    
+    this.state = {
+      tasks: [],
+      prevText: "",
+      text: "",
+      isEditModalVisible : false,
+    }
+  }
 
   changeTextHandler = text => {
     this.setState({ text: text });
-  };
+  }
 
   addTask = () => {
     let notEmpty = this.state.text.trim().length > 0;
@@ -49,7 +60,7 @@ export default class TodoList extends Component {
         () => Tasks.save(this.state.tasks)
       );
     }
-  };
+  }
 
   deleteTask = i => {
     this.setState(
@@ -62,6 +73,39 @@ export default class TodoList extends Component {
       },
       () => Tasks.save(this.state.tasks)
     );
+  };
+  
+  updateTask = (i,item) => {
+    this.setState({
+      isEditModalVisible : true,
+      prevText : item.text,
+      text : item.text,
+      index : i,
+    });
+  };
+
+
+  handleSubmitEdit = () => {
+    var tempArr = this.state.tasks.slice();
+    Reactotron.log("tempArr: \n" + tempArr);
+    
+    Reactotron.log("tempArr: \n" + tempArr);
+    Reactotron.log("tempArr: \n" + tempArr);
+
+    for(item in tempArr){
+      if(tempArr[item].text == this.state.prevText){
+        tempArr[item].text = this.state.text;
+        break;
+      }
+    }
+
+    this.setState(
+      prevState => {  //TODO: HOW?!
+        return { tasks: tempArr };
+      },
+      () => Tasks.save(this.state.tasks)
+    );
+    this.setState({isEditModalVisible : false});
   };
 
   componentDidMount() {
@@ -105,8 +149,15 @@ export default class TodoList extends Component {
         <FlatList
           style={styles.list}
           data={this.state.tasks}
-          renderItem={({ item, index }) =>
-            <View>
+          renderItem={({ item, index }) =>/* 
+          <TouchableOpacity onPress={()=>this.setState({
+            isEditModalVisible : true,
+            prevText : item.text,
+            text : item.text,
+            index : item.index,
+          })}>
+          */
+          <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
               <View style={styles.listItemCont}>
                 <Text style={styles.listItem}>
                   {item.text}
@@ -114,9 +165,37 @@ export default class TodoList extends Component {
                 <Button title="X" onPress={() => this.deleteTask(index)} />
               </View>
               <View style={styles.hr} />
-            </View>
+            </TouchableOpacity>
           }
         />
+
+        <Modal 
+          isVisible={this.state.isEditModalVisible}
+          style={styles.formContainerActivity}>
+          <View style={styles.miniFormContainerActivity}>
+            <Text style={[styles.navBarHeader,{paddingBottom : 30}]}>
+              Edit "{this.state.prevText}"
+            </Text>
+            <TextInput
+              style={styles.textInput}
+              onChangeText={this.changeTextHandler}
+              //onSubmitEditing={this.handleSubmitEdit}
+              value={this.state.text}
+              placeholder="Edit"
+            />
+            <TouchableOpacity
+              onPress={this.handleSubmitEdit}
+              style={styles.button}>
+              <Text style={styles.buttonText}> S U B M I T </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={()=>this.setState({isEditModalVisible : false})}
+              style={styles.button}>
+              <Text style={styles.buttonTextDest}> C A N C E L </Text>
+            </TouchableOpacity>
+          </View>
+        </Modal>
 
         <TextInput
           style={styles.textInput}
@@ -127,7 +206,6 @@ export default class TodoList extends Component {
           returnKeyType="done"
           returnKeyLabel="done"
         />
-
       </View>
     );
   }
