@@ -23,15 +23,17 @@ import Reactotron, { asyncStorage } from 'reactotron-react-native'
 import uuid from 'uuid';
 /*
 * the key for the localStorage is
-*       "AgendaScrTestnewStorageTest_001_withIDs" 
+*       "AgendaActivities" 
 *   change it here with [Change all Occurrences] if you want to change
 */
 
 
 /*
-*   → Edit on TodoList
 *   → automatic update on an event update
-
+*
+*
+*
+*
 *   → Redux
 */
 
@@ -77,7 +79,7 @@ export default class AgendaScreen extends React.Component {
   
     let newItems = {};
 
-   AsyncStorage.getItem("AgendaScrTestnewStorageTest_001_withIDs")
+   AsyncStorage.getItem("AgendaActivities")
     .then((things) => {
       if(things){
         Reactotron.log("things found!");
@@ -285,7 +287,7 @@ export default class AgendaScreen extends React.Component {
       let endHasConflict = (
         (targetDateReference[date][event].startTime <= end && targetDateReference[date][event].endTime >= end)        //if end directly coincides with another event
         && targetDateReference[date][event].id != id                                                                //useful when updating an event
-        && (targetDateReference[data][event].strTime <= end && targetDateReference[date][event].endTime <= end)       //when the end of event overlaps other events
+        && (targetDateReference[date][event].strTime <= end && targetDateReference[date][event].endTime <= end)       //when the end of event overlaps other events
       )
       if( startHasConflict || endHasConflict ){
         return false;
@@ -708,7 +710,7 @@ export default class AgendaScreen extends React.Component {
       //}
 
       //this is here so the first-time-initialized date in the array will be saved in the local storage
-      AsyncStorage.getItem("AgendaScrTestnewStorageTest_001_withIDs")         //gets data from asyncstorage
+      AsyncStorage.getItem("AgendaActivities")         //gets data from asyncstorage
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -746,7 +748,7 @@ export default class AgendaScreen extends React.Component {
   renderEmptyDate() {
     return (
       <View style={styles.emptyDate}>
-        <Text style={{textAlign: 'center'}}>This is empty date!</Text>
+        <Text style={{textAlign: 'center'}}>This is a empty date.</Text>
         <TouchableOpacity
           onPress={this.toggleMainModal}>
             <Text style={styles.buttonText}>Make some activities</Text>
@@ -788,6 +790,6 @@ let Tasks = {
 let Storage = {
   save(things){
     Reactotron.log("in Storage.save saving: " + JSON.stringify(things));
-    AsyncStorage.setItem("AgendaScrTestnewStorageTest_001_withIDs",JSON.stringify(things));
+    AsyncStorage.setItem("AgendaActivities",JSON.stringify(things));
   }
 }
