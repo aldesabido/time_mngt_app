@@ -27,6 +27,16 @@ import uuid from 'uuid';
 *   change it here with [Change all Occurrences] if you want to change
 */
 
+
+/*
+*   → Edit on TodoList
+*   → automatic update on an event update
+
+*   → Redux
+*/
+
+
+
 Reactotron
 .configure()
 .use(asyncStorage())
@@ -42,7 +52,7 @@ export default class AgendaScreen extends React.Component {
       allItems : {},
 
       name: 'Activity Name',
-      startTime: '',
+      startTime: '08:00',
       endTime: '',
       date: '',
       selected: params.passprop,
@@ -118,53 +128,61 @@ export default class AgendaScreen extends React.Component {
       + "\nDate: " + this.state.date
       + "\nStart Time: " + this.state.startTime
       + "\nEnd Time:" + this.state.endTime);
+      let isFreeTime = this.checkFreeTime(this.state.date,this.state.startTime,this.state.endTime,this.state.id);
+      if(isFreeTime){
+        const strTime = this.state.date;            //gets the date
+        if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+          this.state.allItems[strTime] = [];         //initializes the key 
+        }
 
-      const strTime = this.state.date;            //gets the date
-      if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
-        this.state.allItems[strTime] = [];         //initializes the key 
-      }
+        //looks at all the events for all the days
+        targetDateReference = this.state.allItems;
+        newSpecItems = this.state.items;
 
-      //looks at all the events for all the days
-      targetDateReference = this.state.allItems;
-      newSpecItems = this.state.items;
-      for ( date in targetDateReference ){
-        Reactotron.log("TargetDateReference[date]: " + JSON.stringify(targetDateReference[date]));
-        for( event in targetDateReference[date]){
-          if(targetDateReference[date][event].id == this.state.id){
-            Reactotron.log("Found!\nNew Values:\n"
-            + "\ID: " + this.state.id
-            + "\nName: " + this.state.name
-            + "\nDate: " + this.state.date
-            + "\nStart Time: " + this.state.startTime
-            + "\nEnd Time:" + this.state.endTime);
-            targetDateReference[date][event].name = this.state.name;
-            targetDateReference[date][event].date = this.state.date;
-            targetDateReference[date][event].startTime = this.state.startTime;
-            targetDateReference[date][event].endTime = this.state.endTime;
-            break;
+        for ( date in targetDateReference ){
+          Reactotron.log("TargetDateReference[date]: " + JSON.stringify(targetDateReference[date]));
+          for( event in targetDateReference[date]){
+            if(targetDateReference[date][event].id == this.state.id){
+              Reactotron.log("Found!\nNew Values:\n"
+              + "\ID: " + this.state.id
+              + "\nName: " + this.state.name
+              + "\nDate: " + this.state.date
+              + "\nStart Time: " + this.state.startTime
+              + "\nEnd Time:" + this.state.endTime);
+              targetDateReference[date][event].name = this.state.name;
+              targetDateReference[date][event].date = this.state.date;
+              targetDateReference[date][event].startTime = this.state.startTime;
+              targetDateReference[date][event].endTime = this.state.endTime;
+              break;
+            }
           }
         }
+
+
+        Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
+        const newItems = {};                      //initializes a new 
+
+        Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
+        if(newItems[strTime].length > 1){
+          newItems[strTime].sort(function( event1 , event2 ){
+            Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+            return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+          });     //sorts the temp array
+        }
+        
+        this.setState({
+          allItems: newItems,
+          isEditModalVisible : !this.state.isEditModalVisible,
+          selected : this.state.date,
+          items : newSpecItems,
+        },()=> {this.forceUpdate()});
+        Storage.save(newItems);
+      }else{
+        alert("You have a conflict of schedule!\nPlease check your schedule and try again.");
+        this.setState({
+          isEditModalVisible : !this.state.isEditModalVisible,
+        });
       }
-
-
-      Reactotron.log("TargetDateReference: " + JSON.stringify(targetDateReference));
-      const newItems = {};                      //initializes a new 
-
-      Object.keys(targetDateReference).forEach(key => {newItems[key] = targetDateReference[key];}); 
-      if(newItems[strTime].length > 1){
-        newItems[strTime].sort(function( event1 , event2 ){
-          Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
-          return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
-        });     //sorts the temp array
-      }
-      
-      this.setState({
-        allItems: newItems,
-        isEditModalVisible : !this.state.isEditModalVisible,
-        selected : this.state.date,
-        items : newSpecItems,
-      },()=> {this.forceUpdate()});
-      Storage.save(newItems);
       this.forceUpdate();
     }
   } 
@@ -213,8 +231,6 @@ export default class AgendaScreen extends React.Component {
       this.forceUpdate();
   }
 
-
-
   toggleMainModal = () =>{
     this.setState({ date : this.state.selected});
     this.setState({ isMainModalVisible: ! this.state.isMainModalVisible });
@@ -229,6 +245,31 @@ export default class AgendaScreen extends React.Component {
     this.forceUpdate();
   }
 
+  checkFreeTime(date,start,end,id){    //will return true if free time
+    const strTime = date;              //gets the date
+    if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+      this.state.allItems[strTime] = [];         //initializes the key 
+      return true;
+    }
+
+    //looks at all the events for all the days
+    targetDateReference = this.state.allItems;
+    for ( event in targetDateReference[date] ){
+      let startHasConflict = (
+        (targetDateReference[date][event].startTime < start && targetDateReference[date][event].endTime > start) 
+        && targetDateReference[date][event].id != id
+      )
+      let endHasConflict = (
+        (targetDateReference[date][event].startTime < end && targetDateReference[date][event].endTime > end) 
+        && targetDateReference[date][event].id != id
+      )
+      if( startHasConflict || endHasConflict ){
+        return false;
+      }
+    }
+    return true;
+  }
+
   submitHandler(){
     let hasName = this.state.name.trim().length > 0;
     let hasDate = this.state.date != '';
@@ -241,36 +282,45 @@ export default class AgendaScreen extends React.Component {
       + "\nDate: " + this.state.date
       + "\nStart Time: " + this.state.startTime
       + "\nEnd Time:" + this.state.endTime);
-
-      const strTime = this.state.date;          //gets the date
-      if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
-        this.state.allItems[strTime] = [];         //initializes the key 
-      }
-      this.state.allItems[strTime].push({       //pushes the values into the array
-        height: 125,
-        id: uuid.v4(),
-        name: this.state.name,
-        date : this.state.date,
-        startTime : this.state.startTime,
-        endTime : this.state.endTime,
-      });
-      const newItems = {};                      //initializes a new 
-
-        Object.keys(this.state.allItems).forEach(key => {newItems[key] = this.state.allItems[key];}); 
-        if(newItems[strTime].length > 1){
-          newItems[strTime].sort(function( event1 , event2 ){
-            Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
-            return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
-          });     //sorts the temp array
+      //check for conflicts in schedule
+      candidateID = uuid.v4();
+      let isFreeTime = this.checkFreeTime(this.state.date,this.state.startTime,this.state.endTime,candidateID);
+      if(isFreeTime){
+        const strTime = this.state.date;          //gets the date
+        if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
+          this.state.allItems[strTime] = [];         //initializes the key 
         }
-      
-      this.setState({
-        allItems: newItems
-      });
-      Storage.save(newItems);
+        this.state.allItems[strTime].push({       //pushes the values into the array
+          height: 125,
+          id: candidateID,
+          name: this.state.name,
+          date : this.state.date,
+          startTime : this.state.startTime,
+          endTime : this.state.endTime,
+        });
+        const newItems = {};                      //initializes a new 
+
+          Object.keys(this.state.allItems).forEach(key => {newItems[key] = this.state.allItems[key];}); 
+          if(newItems[strTime].length > 1){
+            newItems[strTime].sort(function( event1 , event2 ){
+              Reactotron.log("sort: event1startTime:" + event1.startTime + "- event2.startTime:" + event2.startTime);
+              return Date.parse('1970/01/01 ' + event1.startTime) - Date.parse('1970/01/01 ' + event2.startTime);
+            });     //sorts the temp array
+          }
+        
+        this.setState({
+          allItems: newItems
+        });
+        Storage.save(newItems);
+      }else{
+        alert("You have a conflict of schedule!\nPlease check your schedule and try again.");
+        this.toggleMainModal();
+      }
+    }else{
+      this.toggleMainModal();
+      alert("Input error!\nEntry not recorded!");
     }
     this.forceUpdate();
-    this.toggleMainModal();
   }
 
   taskList() {
@@ -397,7 +447,20 @@ export default class AgendaScreen extends React.Component {
                   marginLeft: 36
                 }
               }}
-              onDateChange={(time) => {this.setState({startTime: time , endTime:time})}}
+              onDateChange={(time) => {
+                const newDate = new Date('1970/01/01 ' + time);
+                Reactotron.log("newDate: (no added hours)\n" + newDate);
+                Reactotron.log("newDate: (hours)\n" + newDate.getHours());
+                hours = newDate.getHours();
+                newDate.setHours(hours + 1 + 8);      // + 1 because 1 hour; + 8 because we're at GMT + 8
+                Reactotron.log("newDate: (with added hours)\n" + newDate);
+                Reactotron.log("NewDate: (toISOString)\n" 
+                + newDate.toISOString().split('T')[1].split('.')[0].slice(0,5));
+                this.setState({
+                  startTime: time, 
+                  endTime: (newDate.toISOString().split('T')[1].split('.')[0].slice(0,5)),
+                })
+              }}
             />
             <Text>Input End Time:</Text>
             <DatePicker
@@ -528,7 +591,20 @@ export default class AgendaScreen extends React.Component {
                   marginLeft: 36
                 }
               }}
-              onDateChange={(time) => {this.setState({startTime: time , endTime:time})}}
+              onDateChange={(time) => {
+                const newDate = new Date('1970/01/01 ' + time);
+                Reactotron.log("newDate: (no added hours)\n" + newDate);
+                Reactotron.log("newDate: (hours)\n" + newDate.getHours());
+                hours = newDate.getHours();
+                newDate.setHours(hours + 1 + 8);      // + 1 because 1 hour; + 8 because we're at GMT + 8
+                Reactotron.log("newDate: (with added hours)\n" + newDate);
+                Reactotron.log("NewDate: (toISOString)\n" 
+                + newDate.toISOString().split('T')[1].split('.')[0].slice(0,5));
+                this.setState({
+                  startTime: time, 
+                  endTime: (newDate.toISOString().split('T')[1].split('.')[0].slice(0,5)),
+                })
+              }}
             />
             <Text>Input End Time:</Text>
             <DatePicker
