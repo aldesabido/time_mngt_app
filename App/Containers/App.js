@@ -8,7 +8,7 @@ import createStore from '../Redux'
 
 import Reactotron, { asyncStorage } from 'reactotron-react-native'
 Reactotron
-  .configure({ host: '192.168.2.121' })
+  .configure({ host: '192.168.2.134' })
   .use(asyncStorage())
   .connect()
 // create our store
