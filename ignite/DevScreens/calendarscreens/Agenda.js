@@ -96,17 +96,12 @@ export default class AgendaScreen extends React.Component {
 
   handleEditClick = (item) => {
     this.setState({ 
-      isEditModalVisible: ! this.state.isEditModalVisible,
-    });
-  }
-
-  prepareEdit = (item) => {
-    this.setState({ 
       id : item.id,
       name : item.name,
       date : item.date,
       startTime : item.startTime,
       endTime : item.endTime,
+      isEditModalVisible: ! this.state.isEditModalVisible,
     });
   }
 
@@ -693,13 +688,10 @@ export default class AgendaScreen extends React.Component {
     //could make a 24-hour to 12-hour converter
       return (
         <TouchableOpacity 
-          onPressIn={this.prepareEdit.bind(this,item)}
-          onPressOut={this.handleEditClick.bind(this)} >
+          onPress={this.handleEditClick.bind(this,item)} >
           <View style={[styles.item, {height: item.height}]}>
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
-            <Text>{item.startTime}--{item.endTime}</Text>
-            <Text>date: {item.date} </Text>
-            <Text>id: {item.id} </Text>
+            <Text>{item.startTime} -- {item.endTime}</Text>
           </View>
         </TouchableOpacity>
       )

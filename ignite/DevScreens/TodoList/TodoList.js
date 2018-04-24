@@ -16,12 +16,12 @@ import {
   Image,
   Icon,
 } from "react-native";
-import { Images } from './DevTheme'
+import { Images } from '../DevTheme'
 
 import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 // Styles
-import styles from './Styles/TodoListStyles'
+import styles from './TodoListStyles'
 
 import Modal from 'react-native-modal';
 //yep, you read that right modal once again
@@ -149,22 +149,15 @@ export default class TodoList extends Component {
         <FlatList
           style={styles.list}
           data={this.state.tasks}
-          renderItem={({ item, index }) =>/* 
-          <TouchableOpacity onPress={()=>this.setState({
-            isEditModalVisible : true,
-            prevText : item.text,
-            text : item.text,
-            index : item.index,
-          })}>
-          */
-          <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
-              <View style={styles.listItemCont}>
-                <Text style={styles.listItem}>
-                  {item.text}
-                </Text>
-                <Button title="X" onPress={() => this.deleteTask(index)} />
-              </View>
-              <View style={styles.hr} />
+          renderItem={({ item, index }) =>
+            <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
+                <View style={styles.listItemCont}>
+                  <Text style={styles.listItem}>
+                    {item.text}
+                  </Text>
+                  <Button title="X" onPress={() => this.deleteTask(index)} />
+                </View>
+                <View style={styles.hr} />
             </TouchableOpacity>
           }
         />
@@ -179,7 +172,6 @@ export default class TodoList extends Component {
             <TextInput
               style={styles.textInput}
               onChangeText={this.changeTextHandler}
-              //onSubmitEditing={this.handleSubmitEdit}
               value={this.state.text}
               placeholder="Edit"
             />

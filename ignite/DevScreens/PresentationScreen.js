@@ -5,7 +5,7 @@ import ButtonBox from './ButtonBox'
 import { StackNavigator } from 'react-navigation'
 // Screens
 import Calendar from './calendarscreens/Calendars'
-import TodoList from './TodoList'
+import TodoList from './TodoList/TodoList.js'
 import Agenda from './calendarscreens/Agenda'
 // Styles
 import styles from './Styles/PresentationScreenStyles'
