@@ -25,37 +25,19 @@ import styles from './TodoListStyles';
 import Modal from 'react-native-modal';
 
 const isAndroid = Platform.OS == "android";
-
 const viewPadding = 10;
 
 
-//redux things
-//don't download dis, Rommel, it's already in node_modules i think
-//just download if kulangan tho huehue
-import { Provider } from 'react-redux';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-
-//import * as actionCreators from '../../../App/Redux/todoActions';
-import Creators from '../../../App/Redux/TodoRedux';
-
-//asdasd
-class TodoList extends Component {
+export default class TodoList extends Component {
   constructor(props){
     super(props);
     
     this.state = {
-      //tasks: [],
+      tasks: [],
       prevText: "",
       text: "",
       isEditModalVisible : false,
     }
-  }
-
-  componentWillMount(){
-    Reactotron.log("this.props.todos: before getTodos\n" + this.props.todos);
-    this.props.getTodos();
   }
 
   componentDidMount() {
@@ -68,10 +50,8 @@ class TodoList extends Component {
       isAndroid ? "keyboardDidHide" : "keyboardWillHide",
       () => this.setState({ viewPadding: viewPadding })
     );
-    
-    //Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
 
-    Reactotron.log("this.props.todos: after getTodos\n" + this.props.todos);
+    Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
   }
 
   changeTextHandler = text => {
@@ -82,8 +62,16 @@ class TodoList extends Component {
     let notEmpty = this.state.text.trim().length > 0;
 
     if (notEmpty) {
-      this.props.addTodo(this.state.text);
-      
+      this.setState(
+        prevState => {
+          let { tasks, text } = prevState;
+          return {
+            tasks: tasks.concat({ key: tasks.length, text: text }),
+            text: ""
+          };
+        },
+        () => Tasks.save(this.state.tasks)
+      );
     }
   }
 
@@ -130,6 +118,7 @@ class TodoList extends Component {
 
   render() {
     return (
+      <Provider store={store}>
         <View
           style={[styles.container, { paddingBottom: this.state.viewPadding }]}>
           <StatusBar
@@ -153,14 +142,13 @@ class TodoList extends Component {
 
           <FlatList
             style={styles.list}
-            data={this.props.todos}
+            data={this.state.tasks}
             renderItem={({ item, index }) =>
-              <TouchableOpacity key={index} onPress={this.updateTask.bind(this,index,item)}>
+              <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
                   <View style={styles.listItemCont}>
                     <Text style={styles.listItem}>
-                      {item}
+                      {item.text}--{item.key}
                     </Text>
-                    {Reactotron.log("Current item:\n" + item + "\nIndex: " + index,true)}
                     <Button title="X" onPress={() => this.deleteTask(index)} />
                   </View>
                   <View style={styles.hr} />
@@ -205,6 +193,7 @@ class TodoList extends Component {
             returnKeyLabel="done"
           />
         </View>
+      </Provider>
     );
   }
 }
@@ -229,13 +218,6 @@ let Tasks = {
 };
 
 
-const mapStateToProps = state => ({
-  todos: state.todos.tasks,
-  newTodo : state.todos.item
-});
 
-function mapDispatchToProps(dispatch){
-  return bindActionCreators(Creators,dispatch)
-}
 
-export default connect(mapStateToProps, mapDispatchToProps )(TodoList);
+AppRegistry.registerComponent("TodoList", () => TodoList);
