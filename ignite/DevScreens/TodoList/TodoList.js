@@ -32,7 +32,6 @@ const viewPadding = 10;
 //redux things
 //don't download dis, Rommel, it's already in node_modules i think
 //just download if kulangan tho huehue
-import { Provider } from 'react-redux';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 

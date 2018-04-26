@@ -39,7 +39,7 @@ class AgendaScreen extends React.Component {
     this.state = {
       items: {},
       
-      allItems : {},
+      //allItems : {},
 
       name: 'Activity Name',
       startTime: '08:00',
@@ -48,9 +48,8 @@ class AgendaScreen extends React.Component {
       selected: params.passprop,
       id : '',
 
-      tasks: [],  //will contain the activities (for the dropdown)
-
-      plsChange : false,      //to change the agenda view after updating (no plans on changing name yet)
+      plsChange : false,      
+      // ↑ to change the agenda view after updating (no plans on changing name yet)
       
       //Modal things switchers
       isMainModalVisible : false,
@@ -64,7 +63,7 @@ class AgendaScreen extends React.Component {
   
     let newItems = {};
 
-   AsyncStorage.getItem("AgendaActivities")
+    AsyncStorage.getItem("AgendaActivities")
     .then((things) => {
       if(things){
         newItems = JSON.parse(things);
@@ -207,7 +206,7 @@ class AgendaScreen extends React.Component {
 
   onDayPress(day){
     Reactotron.log("onDayPress");
-   this.setState({
+    this.setState({
       selected: day.dateString,
       items : {}
     });
