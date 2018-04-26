@@ -31,11 +31,11 @@ export const addTodo = (state = INITIAL_STATE, action) => {
 }
 
 export const deleteTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("deleteTodo",true);
+  Reactotron.log("in deleteTodo: index: " + action.index,true);
   let index = action.index;
   return [
-    ...state.slice(0,index),
-    ...state.concat(state.slice(index + 1))
+    ...state.slice( 0 , index ),
+    ...state.slice( index + 1 )
   ];
 }
 

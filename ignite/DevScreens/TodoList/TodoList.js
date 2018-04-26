@@ -79,12 +79,11 @@ class TodoList extends Component {
   }
 
   addTask = () => {
-    Reactotron.log("AddTask",true);
     let notEmpty = this.state.text.trim().length > 0;
     if (notEmpty) {
-      Reactotron.log("not Empty",true);
       this.props.addTodo(this.state.text);
     }
+    this.setState({text : ''});
   }
 
   deleteTask = i => {
@@ -146,14 +145,15 @@ class TodoList extends Component {
           <FlatList
             style={styles.list}
             data={this.props.todos}
+            keyExtractor={(item, index) => index}
             renderItem={({ item, index }) =>
-              <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
+              <TouchableOpacity key={index} onPress={this.updateTask.bind(this,index,item)}>
                   <View style={styles.listItemCont}>
                     <Text style={styles.listItem}>
-                      {item}
+                      {item}--{index}
                     </Text>
                     {Reactotron.log("Current item:\n" + item + "\nIndex: " + index,true)}
-                    <Button title="X" onPress={() => this.deleteTask.bind(this,index)} />
+                    <Button title="X" onPress={this.deleteTask.bind(this,index)} />
                   </View>
                   <View style={styles.hr} />
               </TouchableOpacity>
