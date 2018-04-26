@@ -19,19 +19,14 @@ const INITIAL_STATE = [];
 /* ------------- Reducers ------------- */
 
 export const getTodos = (state = []) => {
-    Reactotron.log("Getting Todos",true);
-    console.tron.log("in getTodos: state: " + state);
     return state;
 }
 
 export const addTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("addTodo"); 
-  Reactotron.log("action text: " + action.text);
   return [...state, action.text];
 }
 
 export const deleteTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("in deleteTodo: index: " + action.index,true);
   let index = action.index;
   return [
     ...state.slice( 0 , index ),
@@ -40,8 +35,17 @@ export const deleteTodo = (state = INITIAL_STATE, action) => {
 }
 
 export const editTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("editTodo");
-  return state;
+  Reactotron.log("editTodo",true);
+  Reactotron.log("in editTodo: index: " + action.index,true);
+  Reactotron.log("in editTodo: text: " + action.text,true);
+
+  let index = action.index;
+  let text = action.text;
+
+  return state
+    .slice(0,index)
+    .concat(text)
+    .concat(state.slice(index + 1));
 }
 
 export const defaultHandler = (state = INITIAL_STATE) => {

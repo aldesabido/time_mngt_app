@@ -44,7 +44,6 @@ import TodoActions from '../../../App/Redux/TodoRedux';
 class TodoList extends Component {
   constructor(props){
     super(props);
-    
     this.state = {
       //tasks: [],
       prevText: "",
@@ -91,31 +90,19 @@ class TodoList extends Component {
     this.props.deleteTodo(i);
   };
   
-  updateTask = (i,item) => {
+  updateTask = ( i , item) => {
     this.setState({
       isEditModalVisible : true,
-      prevText : item.text,
-      text : item.text,
+      prevText : item,
+      text : item,
       index : i,
     });
   };
 
 
   handleSubmitEdit = () => {
-    var tempArr = this.state.tasks.slice();
-    for(item in tempArr){
-      if(tempArr[item].text == this.state.prevText){
-        tempArr[item].text = this.state.text;
-        break;
-      }
-    }
-
-    this.setState(
-      prevState => {
-        return { tasks: tempArr };
-      },
-      () => Tasks.save(this.state.tasks)
-    );
+    Reactotron.log("HandleSubmitEdit!");
+    this.props.editTodo(this.state.text, this.state.index);
     this.setState({isEditModalVisible : false});
   };
 
@@ -150,7 +137,7 @@ class TodoList extends Component {
               <TouchableOpacity key={index} onPress={this.updateTask.bind(this,index,item)}>
                   <View style={styles.listItemCont}>
                     <Text style={styles.listItem}>
-                      {item}--{index}
+                      {item}
                     </Text>
                     {Reactotron.log("Current item:\n" + item + "\nIndex: " + index,true)}
                     <Button title="X" onPress={this.deleteTask.bind(this,index)} />
@@ -200,26 +187,6 @@ class TodoList extends Component {
     );
   }
 }
-
-let Tasks = {
-  convertToArrayOfObject(tasks, callback) {
-    return callback(
-      tasks ? tasks.split("||").map((task, i) => ({ key: i, text: task })) : []
-    );
-  },
-  convertToStringWithSeparators(tasks) {
-    return tasks.map(task => task.text).join("||");
-  },
-  all(callback) {
-    return AsyncStorage.getItem("TASKS", (err, tasks) =>
-      this.convertToArrayOfObject(tasks, callback)
-    );
-  },
-  save(tasks) {
-    AsyncStorage.setItem("TASKS", this.convertToStringWithSeparators(tasks));
-  }
-};
-
 
 const mapStateToProps = state => ({
   todos: state.todos,
