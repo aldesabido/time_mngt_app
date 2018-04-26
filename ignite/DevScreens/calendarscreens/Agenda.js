@@ -21,18 +21,18 @@ import Reactotron, { asyncStorage } from 'reactotron-react-native'
 
 //another one
 import uuid from 'uuid';
-/*
-* the key for the localStorage is
-*       "AgendaActivities" 
-*   change it here with [Change all Occurrences] if you want to change
-*/
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import TodoActions from '../../../App/Redux/TodoRedux';
+import AgendaActions from '../../../App/Redux/AgendaRedux';
 
 Reactotron
 .configure()
 .use(asyncStorage())
 .connect();
 
-export default class AgendaScreen extends React.Component {
+class AgendaScreen extends React.Component {
   constructor(props) {
     super(props);
     var {params} = this.props.navigation.state;
@@ -61,11 +61,6 @@ export default class AgendaScreen extends React.Component {
   }
 
   componentWillMount(){
-    Tasks.all(tasks => this.setState(
-      { 
-        tasks: tasks || [] ,
-      }
-    ));
   
     let newItems = {};
 
@@ -307,9 +302,9 @@ export default class AgendaScreen extends React.Component {
   }
 
   taskList() {
-    return this.state.tasks.map((tasks,index) => {
+    return this.props.tasks.map((tasks,index) => {
       return (
-        <Picker.Item key={index} label={tasks.text} value={tasks.text} />
+        <Picker.Item key={index} label={tasks} value={tasks} />
       )
     })
   }
@@ -676,13 +671,14 @@ export default class AgendaScreen extends React.Component {
     }, 1000);
     console.log("Items Loaded");
   }
-  
+
   renderItem(item) {
-    //could make a 24-hour to 12-hour converter
+    //SUGG: could make a 24-hour to 12-hour converter
+    //        just for the looks
       return (
         <TouchableOpacity 
           onPress={this.handleEditClick.bind(this,item)} >
-          <View style={[styles.item, {height: item.height}]}>
+          <View style={[styles.item, {height: 75}]}>
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
             <Text>{item.startTime} -- {item.endTime}</Text>
           </View>
@@ -712,28 +708,20 @@ export default class AgendaScreen extends React.Component {
   }
 }
 
-//will handle opertaions with the tasks in the dropdown
-let Tasks = {
-  convertToArrayOfObject(tasks, callback) {
-    return callback(
-      tasks ? tasks.split("||").map((task, i) => ({ key: i, text: task })) : []
-    );
-  },
-  convertToStringWithSeparators(tasks) {
-    return tasks.map(task => task.text).join("||");
-  },
-  all(callback) {
-    return AsyncStorage.getItem("TASKS", (err, tasks) =>
-      this.convertToArrayOfObject(tasks, callback)
-    );
-  },
-  save(tasks) {
-    AsyncStorage.setItem("TASKS", this.convertToStringWithSeparators(tasks));
-  }
-};
-
 let Storage = {
   save(things){
     AsyncStorage.setItem("AgendaActivities",JSON.stringify(things));
   }
 }
+
+const mapStateToProps = state => ({
+  allItems: state.agenda.items,
+  //todolist
+  tasks : state.todos
+});
+
+function mapDispatchToProps(dispatch){
+  return bindActionCreators([TodoActions, AgendaActions],dispatch);
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(AgendaScreen);
