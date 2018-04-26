@@ -7,71 +7,40 @@ import { AsyncStorage } from 'react-native'
 const { Types, Creators } = createActions({
   getTodos: null,
   addTodo : ['text'],
-  editTodo : ['text','index'],
   deleteTodo : ['index'],
+  editTodo : ['text','index'],
 })
 
 export const TodoTypes = Types
 export default Creators
 
 /* ------------- Initial State ------------- */
-
-const INITIAL_STATE = ({
-  tasks : [],
-})
-
+const INITIAL_STATE = [];
 /* ------------- Reducers ------------- */
 
-export const getTodos = (state = INITIAL_STATE) => {
+export const getTodos = (state = []) => {
     Reactotron.log("Getting Todos",true);
-    let newThings = ["Hello", "World","!"];
-    console.tron.log(newThings);
-    return {
-      ...state,
-      tasks : newThings,
-    }
-
- /*    AsyncStorage.getItem("TASKS_000")
-    .then((things) => {
-      Reactotron.log("newThings: " + newThings,true);
-      Reactotron.log("things: " + things,true);
-      if(things){
-        newThings = JSON.parse(things);
-        Reactotron.log("things found!",true);
-        console.tron.log(newThings);
-        
-        return {
-            ...state,
-            tasks : newThings
-        }
-      }else{
-        Reactotron.log("no things found",true);
-        Tasks.save(newThings);
-        return {
-            ...state,
-            tasks : newThings,
-        };
-      }
-    })
-    .catch((reason) => {
-      Reactotron.log("TodoRedux:\nSomething happened!\n" + reason,true);
-      return state;
-      throw reason;
-    }) */
+    console.tron.log("in getTodos: state: " + state);
+    return state;
 }
 
 export const addTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("addTodo");
-  return [...state.tasks, action];
+  Reactotron.log("addTodo"); 
+  Reactotron.log("action text: " + action.text);
+  return [...state, action.text];
+}
+
+export const deleteTodo = (state = INITIAL_STATE, action) => {
+  Reactotron.log("deleteTodo",true);
+  let index = action.index;
+  return [
+    ...state.slice(0,index),
+    ...state.concat(state.slice(index + 1))
+  ];
 }
 
 export const editTodo = (state = INITIAL_STATE, action) => {
   Reactotron.log("editTodo");
-  return state;
-}
-
-export const deleteTodo = (state = INITIAL_STATE, action) => {
-  Reactotron.log("deleteTodo");
   return state;
 }
 

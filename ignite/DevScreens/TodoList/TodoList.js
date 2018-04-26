@@ -38,7 +38,7 @@ import { bindActionCreators } from 'redux';
 
 
 //import * as actionCreators from '../../../App/Redux/todoActions';
-import Creators from '../../../App/Redux/TodoRedux';
+import TodoActions from '../../../App/Redux/TodoRedux';
 
 //asdasd
 class TodoList extends Component {
@@ -71,7 +71,7 @@ class TodoList extends Component {
     
     //Tasks.all(tasks => this.setState({ tasks: tasks || [] }));
 
-    Reactotron.log("this.props.todos: after getTodos\n" + this.props.todos);
+    Reactotron.log("this.props.todos: after getTodos\n" + JSON.stringify(this.props.todos));
   }
 
   changeTextHandler = text => {
@@ -79,25 +79,17 @@ class TodoList extends Component {
   }
 
   addTask = () => {
+    Reactotron.log("AddTask",true);
     let notEmpty = this.state.text.trim().length > 0;
-
     if (notEmpty) {
+      Reactotron.log("not Empty",true);
       this.props.addTodo(this.state.text);
-      
     }
   }
 
   deleteTask = i => {
-    this.setState(
-      prevState => {
-        let tasks = prevState.tasks.slice();
-
-        tasks.splice(i, 1);
-
-        return { tasks: tasks };
-      },
-      () => Tasks.save(this.state.tasks)
-    );
+    Reactotron.log("deleteTask index: " + i);
+    this.props.deleteTodo(i);
   };
   
   updateTask = (i,item) => {
@@ -155,13 +147,13 @@ class TodoList extends Component {
             style={styles.list}
             data={this.props.todos}
             renderItem={({ item, index }) =>
-              <TouchableOpacity key={index} onPress={this.updateTask.bind(this,index,item)}>
+              <TouchableOpacity onPress={this.updateTask.bind(this,index,item)}>
                   <View style={styles.listItemCont}>
                     <Text style={styles.listItem}>
                       {item}
                     </Text>
                     {Reactotron.log("Current item:\n" + item + "\nIndex: " + index,true)}
-                    <Button title="X" onPress={() => this.deleteTask(index)} />
+                    <Button title="X" onPress={() => this.deleteTask.bind(this,index)} />
                   </View>
                   <View style={styles.hr} />
               </TouchableOpacity>
@@ -230,12 +222,11 @@ let Tasks = {
 
 
 const mapStateToProps = state => ({
-  todos: state.todos.tasks,
-  newTodo : state.todos.item
+  todos: state.todos,
 });
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators(Creators,dispatch)
-}
+  return bindActionCreators(TodoActions,dispatch);
+};
 
 export default connect(mapStateToProps, mapDispatchToProps )(TodoList);

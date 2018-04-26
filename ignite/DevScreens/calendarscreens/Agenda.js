@@ -27,14 +27,6 @@ import uuid from 'uuid';
 *   change it here with [Change all Occurrences] if you want to change
 */
 
-
-/**
-*   
-*   → Redux
-*/
-
-
-
 Reactotron
 .configure()
 .use(asyncStorage())
@@ -131,6 +123,7 @@ export default class AgendaScreen extends React.Component {
               targetDateReference[date][event].date = this.state.date;
               targetDateReference[date][event].startTime = this.state.startTime;
               targetDateReference[date][event].endTime = this.state.endTime;
+              targetDateReference[date][event].height = 75;
               break;
             }
           }
@@ -281,7 +274,7 @@ export default class AgendaScreen extends React.Component {
           this.state.allItems[strTime] = [];         //initializes the key 
         }
         this.state.allItems[strTime].push({       //pushes the values into the array
-          height: 125,
+          height: 75,
           id: candidateID,
           name: this.state.name,
           date : this.state.date,
