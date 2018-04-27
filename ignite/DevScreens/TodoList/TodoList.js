@@ -109,6 +109,7 @@ class TodoList extends Component {
     return (
         <View
           style={[styles.container, { paddingBottom: this.state.viewPadding }]}>
+          <Image style={styles.backgroundImage} resizeMode='stretch' />
           <StatusBar
             barStyle="dark-content" />
 

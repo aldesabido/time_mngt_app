@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import { Fonts, Colors, Metrics } from '../../../App/Themes'
+import { Fonts, Colors, Metrics, ApplicationStyles } from '../../../App/Themes'
 
 import {
     Platform
@@ -9,6 +9,7 @@ const isAndroid = Platform.OS == "android";
 const viewPadding = 10;
 
 export default StyleSheet.create({
+  ...ApplicationStyles.screen,
     navBar:{
       height : 55,
       paddingLeft : 10,

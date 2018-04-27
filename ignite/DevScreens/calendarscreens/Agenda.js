@@ -320,6 +320,8 @@ class AgendaScreen extends React.Component {
     })
   }
 
+  
+
   render() {
     var {params} = this.props.navigation.state;
     return (
@@ -679,7 +681,7 @@ class AgendaScreen extends React.Component {
         });
 
         Storage.save(newItems);
-      });
+      })
 
     }, 1000);
     console.log("Items Loaded");
@@ -693,7 +695,7 @@ class AgendaScreen extends React.Component {
           onPress={this.handleEditClick.bind(this,item)} >
           <View style={[styles.item, {height: 75}]}>
             <Text style={[styles.buttonText, {textAlign : 'left'}]}>{item.name}</Text>
-            <Text>{item.startTime} -- {item.endTime}</Text>
+            <Text>{translateToAMPM(item.startTime)} -- {translateToAMPM(item.endTime)}</Text>
           </View>
         </TouchableOpacity>
       )
@@ -725,6 +727,25 @@ let Storage = {
   save(things){
     AsyncStorage.setItem("AgendaActivities",JSON.stringify(things));
   }
+}
+
+function translateToAMPM(dateStr){
+  let hour = dateStr.split(":")[0];
+  let hour12 = '';
+  let minute = dateStr.split(":")[1];
+  let time = '';
+  let ampm = '';
+  if (hour > 11){
+    ampm = "PM";
+  }else{
+    ampm = "AM";
+  }
+  if(hour === "12"){
+    hour12 = "12";
+  }else{
+    hour12 = hour % 12;
+  }
+  return time.concat( hour12 + ":" + minute + " " + ampm);
 }
 
 const mapStateToProps = state => ({

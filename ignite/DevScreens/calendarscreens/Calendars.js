@@ -20,9 +20,6 @@ class CalendarsScreen extends React.Component {
   constructor(props) {
     super(props);
     var { params } = this.props.navigation.state
-/*     this.state = {
-      selected: params.passprop
-    }; */
     this.onDayPress = this.onDayPress.bind(this);
   }
 
@@ -35,7 +32,6 @@ class CalendarsScreen extends React.Component {
       selected: day.dateString
     });
     this.props.setDate(day.dateString);
-    //this.props.navigation.navigate('Agenda', {passprop: day.dateString});
     this.props.navigation.navigate('Agenda');
   }
 
@@ -45,7 +41,6 @@ class CalendarsScreen extends React.Component {
         <TouchableOpacity 
             onPress={() => this.props.navigation.goBack()} 
             style={{
-              //position: 'absolute',
               paddingTop: 30,
               paddingHorizontal: 5,
               zIndex: 1

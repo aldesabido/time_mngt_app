@@ -36,7 +36,7 @@ class PresentationScreen extends React.Component {
   // }
 
   openCalendar = () => {
-    this.props.navigation.navigate('Calendar', {passprop: ''})
+    this.props.navigation.navigate('Calendar')
   }
 
   openTodoList = () => {
@@ -60,8 +60,8 @@ class PresentationScreen extends React.Component {
             <Image source={Images.logo} style={styles.logo} />
           </View>
 
-          <Text style={{color: '#e73536', fontSize: 20, textAlign: 'center'}}>
-            Hi there, {this.props.screenProps.username} !
+          <Text style={{color: '#e73536', fontSize: 25, textAlign: 'center', paddingVertical : 20}}>
+            Hi there, <Text style={{fontWeight : 'bold'}}>{this.props.screenProps.username}</Text>!
           </Text>
           {/* <View style={styles.buttonsContainer}>
             <ButtonBox onPress={this.openComponents} style={styles.componentButton} image={Images.components} text='Components' />
@@ -72,8 +72,8 @@ class PresentationScreen extends React.Component {
             <ButtonBox onPress={this.openTheme} image={Images.theme} text='Theme' />
           </View> */}
           <View style={styles.buttonsContainer}>
-            <ButtonBox onPress={this.openCalendar} text='Calendar' />
-            <ButtonBox onPress={this.openTodoList} text='TodoList' />
+            <ButtonBox onPress={this.openCalendar} text='Calendar' image={Images.calendar}/>
+            <ButtonBox onPress={this.openTodoList} text='TodoList' image={Images.todos}/>
             {/*<ButtonBox onPress={this.openFaq} style={styles.usageButton} image={Images.faq} text='FAQ' />*/}
           </View>
         </ScrollView>

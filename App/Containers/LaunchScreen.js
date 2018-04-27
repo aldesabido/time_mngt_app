@@ -24,7 +24,7 @@ export default class LaunchScreen extends Component {
     super();
     this.state = {
       //TODO: CHANGE THIS BACK
-      username: '',
+      username: 'Test',
       password: '',
     }
   }
