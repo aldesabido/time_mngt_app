@@ -26,18 +26,18 @@ const ApplicationStyles = {
     },
     section: {
       margin: Metrics.section,
-      padding: Metrics.baseMargin
+      padding: Metrics.smallMargin
     },
     sectionTitleLogin: {
       ...Fonts.style.h1,
-      paddingVertical: Metrics.doubleBaseMargin,
+      paddingVertical: Metrics.baseMargin,
       color: '#e73536',
       marginVertical: Metrics.smallMargin,
       textAlign: 'center',
     },
     sectionLogin: {
       ...Fonts.style.normal,
-      paddingVertical: Metrics.doubleBaseMargin,
+      paddingVertical: Metrics.baseMargin,
       color: '#e73536',
       marginVertical: Metrics.smallMargin,
       textAlign: 'center'

@@ -2,6 +2,21 @@ import { StyleSheet } from 'react-native'
 import { Fonts, Colors, Metrics } from '../../../App/Themes'
 
 export default StyleSheet.create({
+  navBar:{
+    flex : .10,
+    flexDirection : 'row',
+    alignItems : 'center',
+  },
+  navBarText:{
+    paddingTop: 10,
+    paddingHorizontal: 5,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  navBarElement:{
+    paddingTop: 10,
+    paddingHorizontal: 5,
+  },
   button: {
     height: 45,
     borderRadius: 5,

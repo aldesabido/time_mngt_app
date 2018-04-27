@@ -25,7 +25,7 @@ import uuid from 'uuid';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import TodoActions from '../../../App/Redux/TodoRedux';
-import AgendaActions from '../../../App/Redux/AgendaRedux';
+import DateActions from '../../../App/Redux/DateRedux';
 
 Reactotron
 .configure()
@@ -38,18 +38,18 @@ class AgendaScreen extends React.Component {
     var {params} = this.props.navigation.state;
     this.state = {
       items: {},
-      
-      //allItems : {},
 
+      allItems: {},
       name: 'Activity Name',
       startTime: '08:00',
       endTime: '',
       date: '',
-      selected: params.passprop,
+      //selected: params.passprop,
       id : '',
 
       plsChange : false,      
       // ↑ to change the agenda view after updating (no plans on changing name yet)
+      // Vote for suggestions on your phones now :D
       
       //Modal things switchers
       isMainModalVisible : false,
@@ -60,7 +60,6 @@ class AgendaScreen extends React.Component {
   }
 
   componentWillMount(){
-  
     let newItems = {};
 
     AsyncStorage.getItem("AgendaActivities")
@@ -78,6 +77,7 @@ class AgendaScreen extends React.Component {
       Reactotron.log("Something happened :(\n" + reason,true);
       throw reason;
     })
+    //this.props.getEvents();
   }
 
   handleEditClick = (item) => {
@@ -206,6 +206,7 @@ class AgendaScreen extends React.Component {
 
   onDayPress(day){
     Reactotron.log("onDayPress");
+    this.props.setDate(day.dateString);
     this.setState({
       selected: day.dateString,
       items : {}
@@ -217,7 +218,7 @@ class AgendaScreen extends React.Component {
   checkFreeTime(date,start,end,passId){    //will return true if free time
     const strTime = date;              //gets the date
     if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
-      this.state.allItems[strTime] = [];         //initializes the key 
+      this.state.allItems[strTime] = [];
       return true;
     }
     const id = passId;
@@ -258,11 +259,21 @@ class AgendaScreen extends React.Component {
     let hasStart = this.state.startTime != '';
     let hasEnd = this.state.endTime != '';
 
-    if(hasName && hasDate && hasStart && hasEnd){
+    if(hasName && hasDate && hasStart && hasEnd){   //check if all inputs are not blank
       //check for conflicts in schedule
       candidateID = uuid.v4();
       let isFreeTime = this.checkFreeTime(this.state.date,this.state.startTime,this.state.endTime,candidateID);
-      if(isFreeTime){
+
+      if(isFreeTime){     //if time is a free time
+     /*    try{
+          this.props.agenda[this.state.date];
+          this.props.addEvent(candidateID,this.state.name,this.state.date,this.state.startTime,this.state.endTime);
+        }catch(e){
+          this.props.initializeDate(this.state.date); 
+          this.props.addEvent(candidateID,this.state.name,this.state.date,this.state.startTime,this.state.endTime);
+        } */
+        
+         
         const strTime = this.state.date;          //gets the date
         if (!this.state.allItems[strTime]){          //if the date is not already a key in the array
           this.state.allItems[strTime] = [];         //initializes the key 
@@ -288,14 +299,15 @@ class AgendaScreen extends React.Component {
           allItems: newItems
         });
         Storage.save(newItems);
-      }else{
+     }else{  //if there's a conflict in schedule
         alert("You have a conflict of schedule!\nPlease check your schedule and try again.");
         this.toggleMainModal();
       }
-    }else{
+    }else{  //if there are missing inputs
       this.toggleMainModal();
       alert("Input error!\nEntry not recorded!");
     }
+
     this.toggleMainModal();
     this.forceUpdate();
   }
@@ -312,21 +324,29 @@ class AgendaScreen extends React.Component {
     var {params} = this.props.navigation.state;
     return (
       <View style={styles.container}>
-        <TouchableOpacity
-            onPress={() => {this.props.navigation.navigate('Calendar', {passprop: params.passprop})}} 
-            style={styles.button}>
-              <Text style={styles.buttonText}>back to Calendar</Text>
-        </TouchableOpacity>
-        <Text style={{alignItems: 'center'}}>
-          Week's Agenda
-        </Text>
+
+        <View style={styles.navBar}>
+            <TouchableOpacity 
+              onPress={() => {
+                this.props.navigation.goBack();
+                this.props.setDate('');
+              }} 
+              style={styles.navBarElement}>
+                <Image source={Images.backButton} />
+            </TouchableOpacity>
+            <Text style={styles.navBarText}>
+              List of Activities
+            </Text>
+          </View>
+
         <Agenda
           key={this.state.plsChange}
           ref={component => this.agenda = component}
           items={this.state.items}
           onDayPress={this.onDayPress.bind(this)}
           loadItemsForMonth={this.loadItems.bind(this)}
-          selected={this.state.selected}
+          //selected={this.state.selected}
+          selected={this.props.selectedDate}
           renderItem={this.renderItem.bind(this)}
           renderEmptyDate={this.renderEmptyDate.bind(this)}
           rowHasChanged={this.rowHasChanged.bind(this)}
@@ -628,16 +648,11 @@ class AgendaScreen extends React.Component {
   loadItems(day) {
     Reactotron.log("loadItems(day) day: " + JSON.stringify(day));
     setTimeout(() => {
-      //this.forceUpdate();
-      //for (let i = 0; i < 1; i++) {               //loads for the days before/after the day (day is 0) (before is negative) (after is positive)
-        //const time = day.timestamp + 0 * 24 * 60 * 60 * 1000;
-        //const strTime = this.timeToString(time);
         strTime = day.dateString;
         if (!this.state.allItems[strTime]) {        //if no events in this day based on item
           this.state.items[strTime] = [];           //empty string so that the Agenda component will not think that it's still loading
         }else{                                      //if the day has events
           let array = [];
-          //array[strTime] = this.state.allItems[strTime].slice(0);               //stores to temp array
           array[strTime] = this.state.allItems[strTime].slice(0);               //stores to temp array
           array[strTime]
             .sort(function( event1 , event2 ){
@@ -645,12 +660,11 @@ class AgendaScreen extends React.Component {
             });     //sorts the temp array
 
           this.state.items[strTime] = array[strTime];                  //gives the sorted array to this.state.items[strTime]
-          //this.state.items[strTime] = this.state.allItems[strTime];  //original code (only line in this block)
         }
       //}
 
       //this is here so the first-time-initialized date in the array will be saved in the local storage
-      AsyncStorage.getItem("AgendaActivities")         //gets data from asyncstorage
+      AsyncStorage.getItem("AgendaActivities")        
       .then((things) => {
         newItems = JSON.parse(things);
       
@@ -673,7 +687,7 @@ class AgendaScreen extends React.Component {
 
   renderItem(item) {
     //SUGG: could make a 24-hour to 12-hour converter
-    //        just for the looks
+    //        just for the looks?
       return (
         <TouchableOpacity 
           onPress={this.handleEditClick.bind(this,item)} >
@@ -714,13 +728,13 @@ let Storage = {
 }
 
 const mapStateToProps = state => ({
-  allItems: state.agenda.items,
+  selectedDate: state.date,
   //todolist
   tasks : state.todos
 });
 
 function mapDispatchToProps(dispatch){
-  return bindActionCreators([TodoActions, AgendaActions],dispatch);
+  return bindActionCreators(DateActions,dispatch);
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(AgendaScreen);

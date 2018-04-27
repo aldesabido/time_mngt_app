@@ -11,6 +11,7 @@ export const reducers = combineReducers({
   search: require('./SearchRedux').reducer,
   todos : require('./TodoRedux').reducer,
   agenda : require('./AgendaRedux').reducer,
+  date : require('./DateRedux').reducer,
 })
 
 export default () => {

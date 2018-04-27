@@ -12,27 +12,38 @@ import {Calendar} from 'react-native-calendars';
 import AgendaScreen from './Agenda';
 import { Images } from '../DevTheme';
 
-export default class CalendarsScreen extends React.Component {
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import DateActions from '../../../App/Redux/DateRedux';
+
+class CalendarsScreen extends React.Component {
   constructor(props) {
     super(props);
     var { params } = this.props.navigation.state
-    this.state = {
+/*     this.state = {
       selected: params.passprop
-    };
+    }; */
     this.onDayPress = this.onDayPress.bind(this);
   }
+
+  componentWillMount(){
+    this.props.setDate('');
+  }
+  
   onDayPress(day){
     this.setState({
       selected: day.dateString
     });
-    {this.props.navigation.navigate('Agenda', {passprop: day.dateString})}
+    this.props.setDate(day.dateString);
+    //this.props.navigation.navigate('Agenda', {passprop: day.dateString});
+    this.props.navigation.navigate('Agenda');
   }
 
   render() {
     return (
-      <ScrollView style={styles.container}>
+      <View style={styles.container}>
         <TouchableOpacity 
-            onPress={() => this.props.navigation.navigate('PresentationScreen')} 
+            onPress={() => this.props.navigation.goBack()} 
             style={{
               //position: 'absolute',
               paddingTop: 30,
@@ -41,16 +52,14 @@ export default class CalendarsScreen extends React.Component {
             }}>
               <Image source={Images.backButton} />
         </TouchableOpacity>
-        <Text style={styles.text}>Showing Agenda for: {this.state.selected}</Text>
+        <Text style={styles.text}>Please tap a date</Text>
         <Calendar
           onDayPress={this.onDayPress}
           style={styles.calendar}
           hideExtraDays
-          markedDates={{[this.state.selected]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
+          markedDates={{[this.props.selectedDate]: {selected: true, disableTouchEvent: true, selectedDotColor: 'orange'}}}
         />
-
-        
-      </ScrollView>
+      </View>
     );
   }
 }
@@ -74,3 +83,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFE5E5'
   }
 });
+
+const mapStateToProps = state => ({
+  selectedDate: state.date,
+});
+
+function mapDispatchToProps(dispatch){
+  return bindActionCreators(DateActions,dispatch);
+};
+
+export default connect(mapStateToProps,mapDispatchToProps)(CalendarsScreen);

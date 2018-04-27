@@ -1,5 +1,13 @@
 import React, { Component } from 'react'
-import { ScrollView, Text, Image, View, TextInput } from 'react-native'
+import { 
+  ScrollView, 
+  Text, 
+  Image, 
+  View, 
+  TextInput,
+  Keyboard,
+  Platform,
+} from 'react-native'
 import LoginButton from '../../ignite/DevScreens/LoginButton.js'
 
 import { Images } from '../Themes'
@@ -7,14 +15,31 @@ import { Images } from '../Themes'
 // Styles
 import styles from './Styles/LaunchScreenStyles'
 
+const isAndroid = Platform.OS == "android";
+
+const viewPadding = 10;
+
 export default class LaunchScreen extends Component {
   constructor(){
     super();
     this.state = {
       //TODO: CHANGE THIS BACK
-      username: 'User',
-      password: 'password',
+      username: '',
+      password: '',
     }
+  }
+
+  componentDidMount() {
+    Keyboard.addListener(
+      isAndroid ? "keyboardDidShow" : "keyboardWillShow",
+      e => this.setState({ viewPadding: e.endCoordinates.height + viewPadding })
+    );
+
+    Keyboard.addListener(
+      isAndroid ? "keyboardDidHide" : "keyboardWillHide",
+      () => this.setState({ viewPadding: viewPadding })
+    );
+    
   }
 
   onChangeName(value){
@@ -37,8 +62,8 @@ export default class LaunchScreen extends Component {
           <View style={styles.centered}>
             <Image source={Images.logo} style={styles.logo} />
           </View>
+          <Text style={styles.sectionTitleLogin}> Welcome! </Text>
           <View style={styles.section} >
-            <Text style={styles.sectionTitleLogin}> Welcome! </Text>
             <Text style={styles.sectionLogin}>User</Text>
             <TextInput 
               placeholder='username'
